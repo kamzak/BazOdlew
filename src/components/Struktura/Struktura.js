@@ -9,7 +9,6 @@ const Struktura = () => {
   const [urls, setUrls] = useState([]);
   const [progress, setProgress] = useState(0);
   const [imgUrls, setImgUrls] = useState([]);
-  const [wytop, setWytop] = useState();
   const [showTable, setShowTable] = useState(false);
   const [datas, setDatas] = useState([]);
 
@@ -22,10 +21,6 @@ const Struktura = () => {
   const udzFerrRef = useRef();
 
   const countIt = 0;
-
-  const wytopHandler = (e) => {
-    setWytop(e.target.value);
-  };
 
   const handleChange = (e) => {
     for (let i = 0; i < e.target.files.length; i++) {
@@ -101,23 +96,6 @@ const Struktura = () => {
       .catch((err) => console.log(err));
   };
 
-  const listImages = async () => {
-    setShowTable((prevState) => !prevState);
-    await storage
-      .ref()
-      .child("images/")
-      .listAll()
-      .then((res) => {
-        res.items.forEach((item) => {
-          item.getDownloadURL().then((url) => {
-            setImgUrls((arr) => [...arr, url]);
-          });
-        });
-      })
-      .catch((err) => {
-        alert(err.message);
-      });
-  };
   async function fetchData() {
     const response = await fetch(
       "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/struktura.json"
@@ -138,7 +116,30 @@ const Struktura = () => {
       });
       setDatas(baseItems);
     }
-  }
+  };
+
+  const listImages = async () => {
+    await fetchData();
+    setShowTable((prevState) => !prevState);
+    if(!showTable) {
+      await storage
+      .ref()
+      .child("images/")
+      .listAll()
+      .then((res) => {
+        res.items.forEach((item) => {
+          item.getDownloadURL().then((url) => {
+            setImgUrls((arr) => [...arr, url]);
+          });
+        });
+      })
+      .catch((err) => {
+        alert(err.message);
+      }); 
+    }else {
+      setImgUrls([]);
+    }
+  };
 
   return (
     <Layout className={classes.struktura}>
@@ -152,7 +153,6 @@ const Struktura = () => {
             <Form.Label htmlFor="inlineFormInputName">Nr wytopu</Form.Label>
             <Form.Control
               ref={nrWytRef}
-              onChange={wytopHandler}
               id="inlineFormInputName"
               placeholder="Np. 2313"
             />
@@ -237,12 +237,11 @@ const Struktura = () => {
         >
           Dodaj wyniki
         </Button>
-        <Button onClick={fetchData}>Fetchuj dane</Button>
       </Form>
       <progress value={progress} max="100" />
-      <Button onClick={listImages}>Pokaż wyniki</Button>
+      <Button onClick={listImages} className={classes.showBtn}>Pokaż wyniki</Button>
       {showTable && (
-        <Table striped bordered variant="dark">
+        <Table striped bordered variant="dark" >
           <thead>
             <tr>
               <th>Nr wytopu</th>
@@ -252,14 +251,15 @@ const Struktura = () => {
               <th>Udział grafitu [%]</th>
               <th>Udział perlitu [%]</th>
               <th>Udział ferrytu [%]</th>
-              <th style={{width: '25%'}}>Zdjęcia struktur</th>
+              <th style={{ width: "12.5%" }}>Zdjęcia przed trawieniem</th>
+              <th style={{ width: "12.5%" }}>Zdjęcie po trawieniu</th>
             </tr>
           </thead>
           <tbody>
             {console.log(datas)}
             {datas.map((item, i) => {
               return (
-                <tr key={i}>
+                <tr key={i} className="align-items-center">
                   <td>{item.nrWyt}</td>
                   <td>{item.rodzMet}</td>
                   <td>{item.liczbWydz}</td>
@@ -269,7 +269,23 @@ const Struktura = () => {
                   <td>{item.udzFerr}</td>
                   <td>
                     {imgUrls.map((url, i) => {
-                      if (url.includes(item.nrWyt) && countIt < 2) {
+                      if (url.includes(`${item.nrWyt}_1`) && countIt < 2) {
+                        return (
+                          <a key={i} href={url} target="_blank">
+                            <img
+                              key={i}
+                              className={classes.zdj}
+                              src={url}
+                              alt=""
+                            />
+                          </a>
+                        );
+                      }
+                    })}
+                  </td>
+                  <td>
+                    {imgUrls.map((url, i) => {
+                      if (url.includes(`${item.nrWyt}_2`) && countIt < 2) {
                         return (
                           <a key={i} href={url} target="_blank">
                             <img
