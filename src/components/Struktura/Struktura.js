@@ -22,7 +22,17 @@ const Struktura = () => {
 
   const countIt = 0;
 
-  const handleChange = (e) => {
+  const handleChange1 = (e) => {
+    setImages([]);
+    for (let i = 0; i < e.target.files.length; i++) {
+      if (e.target.files[0]) {
+        const newImage = e.target.files[i];
+        newImage["id"] = Math.random();
+        setImages((prevState) => [...prevState, newImage]);
+      }
+    }
+  };
+  const handleChange2 = (e) => {
     for (let i = 0; i < e.target.files.length; i++) {
       if (e.target.files[0]) {
         const newImage = e.target.files[i];
@@ -219,14 +229,22 @@ const Struktura = () => {
           </Col>
           <Col xs={12} sm={6} xl={3} className="mb-3">
             <Form.Label htmlFor="inlineFormInputGroupUsername">
-              Zdjęcia struktur
+              Zdjęcie struktury przed trawieniem
             </Form.Label>
             <FormControl
               id="inlineFormInputGroupUsername"
-              placeholder="Zdjęcie przed jak i po trawieniu"
+              placeholder="Zdjęcie przed trawieniem"
               type="file"
-              multiple
-              onChange={handleChange}
+              onChange={handleChange1}
+            />
+            <Form.Label htmlFor="inlineFormInputGroupUsername">
+              Zdjęcie struktury po trawieniu
+            </Form.Label>
+            <FormControl
+              id="inlineFormInputGroupUsername"
+              placeholder="Zdjęcie po trawieniu"
+              type="file"
+              onChange={handleChange2}
             />
           </Col>
         </Row>
