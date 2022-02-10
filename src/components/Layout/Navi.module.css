@@ -1,0 +1,29 @@
+.nav {
+    background-color: #132C33;
+    color: #51C4D3 !important;
+}
+
+.home {
+    background-color: #126E82;
+    border-radius: 0.25rem;
+    text-align: center;
+}
+.home:hover {
+    background-color: #51C4D3;
+    color: #132C33 !important;
+}
+
+.links {
+    color: #D8E3E7 !important;
+    text-align: center;
+}
+
+.links:hover {
+    color: #aadef0 !important;
+}
+
+@media (max-width: 992px){
+    .home {
+        margin-top: 1rem !important;
+    }
+}
