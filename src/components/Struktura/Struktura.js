@@ -20,6 +20,8 @@ const Struktura = () => {
   const udzGrafRef = useRef();
   const udzPerlRef = useRef();
   const udzFerrRef = useRef();
+  const img1Ref = useRef();
+  const img2Ref = useRef();
 
   const countIt = 0;
 
@@ -78,8 +80,18 @@ const Struktura = () => {
     );
     
     Promise.all(promises)
-      .then(() => alert("All images uploaded"))
+      .then(() => alert("Dane zostały wprowadzone do bazy danych!")).then(() => document.location.reload())
       .catch((err) => console.log(err));
+
+      nrWytRef.current.value = '';
+      rodzMetRef.current.value = '';
+      liczbWydzRef.current.value = '';
+      stpSferRef.current.value = '';
+      udzGrafRef.current.value = '';
+      udzPerlRef.current.value = '';
+      udzFerrRef.current.value = '';
+      img1Ref.current.value = null;
+      img2Ref.current.value =  null;
   };
 
   async function fetchData() {
@@ -88,7 +100,6 @@ const Struktura = () => {
     );
     const data = await response.json();
     const baseItems = [];
-    console.log(data);
     for (const key in data) {
       baseItems.push({
         id: key,
@@ -209,6 +220,7 @@ const Struktura = () => {
             </Form.Label>
             <FormControl
               id="inlineFormInputGroupUsername"
+              ref={img1Ref}
               placeholder="Zdjęcie przed trawieniem"
               type="file"
               onChange={handleChange1}
@@ -218,6 +230,7 @@ const Struktura = () => {
             </Form.Label>
             <FormControl
               id="inlineFormInputGroupUsername"
+              ref={img2Ref}
               placeholder="Zdjęcie po trawieniu"
               type="file"
               onChange={handleChange2}
