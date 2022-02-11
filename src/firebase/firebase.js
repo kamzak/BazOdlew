@@ -1,5 +1,8 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
+import 'firebase/compat/database';
+import { getDatabase } from "firebase/database";
+
 
 // Import the functions you need from the SDKs you need
 
@@ -16,13 +19,15 @@ const firebaseConfig = {
   messagingSenderId: "935744604931",
   appId: "1:935744604931:web:d144f49ff664198d77f736",
   measurementId: "G-4XHB6GSEVK",
+  databaseURL: "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app",
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const storage = firebase.storage();
+const app = firebase.initializeApp(firebaseConfig);
+const storage = firebase.storage(app);
+const database = getDatabase(app);
 
 export  {
-    storage, firebase as default
+    storage, database, firebase as default
   }
  

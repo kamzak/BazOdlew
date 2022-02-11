@@ -1,12 +1,13 @@
 import { useRef, useState } from "react";
 import { Form, Button, Col, Row, FormControl, Table } from "react-bootstrap";
-import { storage } from "../../firebase/firebase";
+import { storage, database } from "../../firebase/firebase";
+import { getDatabase, ref, set } from "firebase/database";
+
 import Layout from "../Layout/Layout";
 import classes from "./Struktura.module.css";
 
 const Struktura = () => {
   const [images, setImages] = useState([]);
-  const [urls, setUrls] = useState([]);
   const [progress, setProgress] = useState(0);
   const [imgUrls, setImgUrls] = useState([]);
   const [showTable, setShowTable] = useState(false);
@@ -42,10 +43,11 @@ const Struktura = () => {
     }
   };
 
-  const handleForm = (event) => {
+  const sendData = async (event) => {
     event.preventDefault();
-
-    const strDane = {
+    let count = 1;
+    const promises = [];
+    await set(ref(database, "struktura/" + nrWytRef.current.value), {
       nrWyt: nrWytRef.current.value,
       rodzMet: rodzMetRef.current.value,
       liczbWydz: liczbWydzRef.current.value,
@@ -53,54 +55,28 @@ const Struktura = () => {
       udzGraf: udzGrafRef.current.value,
       udzPerl: udzPerlRef.current.value,
       udzFerr: udzFerrRef.current.value,
-    };
-
-    async function httpReq() {
-      const response = await fetch(
-        "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/struktura.json",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+    }).then(
+      images.map((image) => {
+        const uploadTask = storage
+          .ref(`/images/${nrWytRef.current.value}_${count}`)
+          .put(image);
+        promises.push(uploadTask);
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            setProgress(progress);
           },
-          body: JSON.stringify(strDane),
-        }
-      );
-      const data = await response.json();
-    }
-    httpReq();
-
-    const promises = [];
-    let count = 1;
-    images.map((image) => {
-      const uploadTask = storage
-        .ref(`/images/${nrWytRef.current.value}_${count}`)
-        .put(image);
-      promises.push(uploadTask);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setProgress(progress);
-        },
-        (error) => {
-          console.log(error);
-        },
-        async () => {
-          await storage
-            .ref("images")
-            .child(image.name)
-            .getDownloadURL()
-            .then((urls) => {
-              setUrls((prevState) => [...prevState, urls]);
-            });
-        }
-      );
-      count = count + 1;
-    });
-
+          (error) => {
+            console.log(error);
+          }
+        );
+        count = count + 1;
+      })
+    );
+    
     Promise.all(promises)
       .then(() => alert("All images uploaded"))
       .catch((err) => console.log(err));
@@ -126,27 +102,27 @@ const Struktura = () => {
       });
       setDatas(baseItems);
     }
-  };
+  }
 
   const listImages = async () => {
     await fetchData();
     setShowTable((prevState) => !prevState);
-    if(!showTable) {
+    if (!showTable) {
       await storage
-      .ref()
-      .child("images/")
-      .listAll()
-      .then((res) => {
-        res.items.forEach((item) => {
-          item.getDownloadURL().then((url) => {
-            setImgUrls((arr) => [...arr, url]);
+        .ref()
+        .child("images/")
+        .listAll()
+        .then((res) => {
+          res.items.forEach((item) => {
+            item.getDownloadURL().then((url) => {
+              setImgUrls((arr) => [...arr, url]);
+            });
           });
+        })
+        .catch((err) => {
+          alert(err.message);
         });
-      })
-      .catch((err) => {
-        alert(err.message);
-      }); 
-    }else {
+    } else {
       setImgUrls([]);
     }
   };
@@ -248,18 +224,16 @@ const Struktura = () => {
             />
           </Col>
         </Row>
-        <Button
-          onClick={handleForm}
-          className={classes.submitBtn}
-          type="submit"
-        >
+        <Button onClick={sendData} className={classes.submitBtn} type="submit">
           Dodaj wyniki
         </Button>
       </Form>
       <progress value={progress} max="100" />
-      <Button onClick={listImages} className={classes.showBtn}>Pokaż wyniki</Button>
+      <Button onClick={listImages} className={classes.showBtn}>
+        Pokaż wyniki
+      </Button>
       {showTable && (
-        <Table striped bordered variant="dark" >
+        <Table striped bordered variant="dark">
           <thead>
             <tr>
               <th>Nr wytopu</th>
@@ -274,7 +248,6 @@ const Struktura = () => {
             </tr>
           </thead>
           <tbody>
-            {console.log(datas)}
             {datas.map((item, i) => {
               return (
                 <tr key={i} className="align-items-center">
