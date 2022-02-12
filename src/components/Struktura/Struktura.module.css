@@ -34,7 +34,8 @@ tr td {
   display: inline-block;
   width: 125px;
   height: 125px;
-  border: 2px outset #bbd9e4;
+  border: 1px solid #126E82;
+  border-radius: 5px;
   transition: .5s ease;
   backface-visibility: hidden;
 }

@@ -171,6 +171,8 @@ const Struktura = () => {
               ref={nrWytRef}
               id="inlineFormInputName"
               placeholder="Np. 2313"
+              type="number"
+              min="0"
             />
           </Col>
           <Col xs={12} sm={6} xl={3} className="mb-3">
@@ -191,6 +193,8 @@ const Struktura = () => {
               ref={liczbWydzRef}
               id="inlineFormInputName"
               placeholder="Np. 2313"
+              type="number"
+              min="0"
             />
           </Col>
           <Col xs={12} sm={6} xl={3} className="mb-3">
@@ -200,7 +204,10 @@ const Struktura = () => {
             <FormControl
               ref={stpSferRef}
               id="inlineFormInputGroupUsername"
-              placeholder="Np. sfero, ADI, szare, SiMo itd."
+              placeholder="Sferoidalność"
+              type="number"
+              min="0"
+              max="100"
             />
           </Col>
           <Col xs={12} sm={6} xl={3} className="mb-3">
@@ -211,6 +218,9 @@ const Struktura = () => {
               ref={udzGrafRef}
               id="inlineFormInputName"
               placeholder="Udział % grafitu w strukturze"
+              type="number"
+              min="0"
+              max="100"
             />
           </Col>
           <Col xs={12} sm={6} xl={3} className="mb-3">
@@ -221,6 +231,9 @@ const Struktura = () => {
               ref={udzPerlRef}
               id="inlineFormInputGroupUsername"
               placeholder="Udział % perlitu w strukturze"
+              type="number"
+              min="0"
+              max="100"
             />
           </Col>
           <Col xs={12} sm={6} xl={3} className="mb-3">
@@ -231,6 +244,9 @@ const Struktura = () => {
               ref={udzFerrRef}
               id="inlineFormInputName"
               placeholder="Udział % ferrytu w strukturze"
+              type="number"
+              min="0"
+              max="100"
             />
           </Col>
           <Col xs={12} sm={6} xl={3} className="mb-3">
