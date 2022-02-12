@@ -38,9 +38,6 @@ const Struktura = () => {
   const img1Ref = useRef();
   const img2Ref = useRef();
 
-  // Counter for image naming
-  const countIt = 0;
-
   // Insert first image func
   const handleChange1 = (e) => {
     setImages([]);
@@ -273,7 +270,9 @@ const Struktura = () => {
             <tr className="align-items-center">
               <th>Nr wytopu</th>
               <th>Rodzaj metalu</th>
-              <th>Liczba wydzieleń grafitu [1/mm<sup>2</sup>]</th>
+              <th>
+                Liczba wydzieleń grafitu [1/mm<sup>2</sup>]
+              </th>
               <th>Stopień sferoidalności grafitu [%]</th>
               <th>Udział grafitu [%]</th>
               <th>Udział perlitu [%]</th>
@@ -294,33 +293,49 @@ const Struktura = () => {
                   <td>{item.udzGraf}</td>
                   <td>{item.udzPerl}</td>
                   <td>{item.udzFerr}</td>
-                  <td>
+                  <td className={classes.imgCont}>
                     {imgUrls.map((url, i) => {
-                      if (url.includes(`${item.nrWyt}_1`) && countIt < 2) {
+                      if (url.includes(`${item.nrWyt}_1`)) {
                         return (
-                          <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                          <a
+                            key={i}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             <img
                               key={i}
                               className={classes.zdj}
                               src={url}
                               alt=""
                             />
+                            <div className={classes.middle}>
+                              <div className={classes.text}>Kliknij aby powiększyć</div>
+                            </div>
                           </a>
                         );
                       }
                     })}
                   </td>
-                  <td>
+                  <td className={classes.imgCont}>
                     {imgUrls.map((url, i) => {
-                      if (url.includes(`${item.nrWyt}_2`) && countIt < 2) {
+                      if (url.includes(`${item.nrWyt}_2`)) {
                         return (
-                          <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                          <a
+                            key={i}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             <img
                               key={i}
                               className={classes.zdj}
                               src={url}
                               alt=""
                             />
+                            <div className={classes.middle}>
+                              <div className={classes.text}>Kliknij aby powiększyć</div>
+                            </div>
                           </a>
                         );
                       }

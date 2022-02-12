@@ -30,16 +30,48 @@ tr td {
 }
 
 .zdj {
+  opacity: 1;
   display: inline-block;
   width: 125px;
   height: 125px;
   border: 2px outset #bbd9e4;
+  transition: .5s ease;
+  backface-visibility: hidden;
 }
 
+/*
 .zdj:hover {
   opacity: 0.7;
   border: 2px solid #126E82;
+}*/
+
+.imgCont{
+  position: relative;
 }
+
+.middle {
+  transition: .5s ease;
+  opacity: 0;
+  position: absolute;
+  bottom: 0%;
+  left: 0%;
+  text-align: center;
+}
+
+.imgCont:hover .zdj {
+  opacity: 0.6;
+}
+
+.imgCont:hover .middle {
+  opacity: 0.8;
+}
+
+.text {
+  background-color: #126E82;
+  color: white;
+  padding: 0.25rem;
+}
+
 
 .deleteIcon {
   background-image: url("/src/components/static/delete.png");
@@ -64,12 +96,4 @@ progress[value] {
 
 .dataTable, thead, tbody, tr, td, th {
   border: 1px solid #126E82;
-}
-
-.hoverTxt {
-  color:red;
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
