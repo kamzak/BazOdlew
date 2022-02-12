@@ -2,18 +2,32 @@ import { useRef, useState } from "react";
 import { Form, Button, Col, Row, FormControl, Table } from "react-bootstrap";
 import { storage, database } from "../../firebase/firebase";
 import { ref, set, remove } from "firebase/database";
-import deleteIcon from '../static/delete.png';
 
 import Layout from "../Layout/Layout";
+import Pagination from "../Layout/Pagination";
 import classes from "./Struktura.module.css";
 
 const Struktura = () => {
+  // Manage data states
   const [images, setImages] = useState([]);
   const [progress, setProgress] = useState(0);
   const [imgUrls, setImgUrls] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [datas, setDatas] = useState([]);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [recPerPage] = useState(3);
+
+  // Pagination func setting current page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Pagination logic const's
+  const indexOfLastRec = currentPage * recPerPage;
+  const indexOfFirstRec = indexOfLastRec - recPerPage;
+  const currentRecords = datas.slice(indexOfFirstRec, indexOfLastRec);
+
+  // Ref's for inputs
   const nrWytRef = useRef();
   const rodzMetRef = useRef();
   const liczbWydzRef = useRef();
@@ -24,8 +38,10 @@ const Struktura = () => {
   const img1Ref = useRef();
   const img2Ref = useRef();
 
+  // Counter for image naming
   const countIt = 0;
 
+  // Insert first image func
   const handleChange1 = (e) => {
     setImages([]);
     for (let i = 0; i < e.target.files.length; i++) {
@@ -36,6 +52,7 @@ const Struktura = () => {
       }
     }
   };
+  // Insert second image func
   const handleChange2 = (e) => {
     for (let i = 0; i < e.target.files.length; i++) {
       if (e.target.files[0]) {
@@ -46,6 +63,7 @@ const Struktura = () => {
     }
   };
 
+  // On submit form func
   const sendData = async (event) => {
     event.preventDefault();
     let count = 1;
@@ -79,22 +97,25 @@ const Struktura = () => {
         count = count + 1;
       })
     );
-    
+
     Promise.all(promises)
-      .then(() => alert("Dane zostały wprowadzone do bazy danych!")).then(() => document.location.reload())
+      .then(() => alert("Dane zostały wprowadzone do bazy danych!"))
+      .then(() => document.location.reload())
       .catch((err) => console.log(err));
 
-      nrWytRef.current.value = '';
-      rodzMetRef.current.value = '';
-      liczbWydzRef.current.value = '';
-      stpSferRef.current.value = '';
-      udzGrafRef.current.value = '';
-      udzPerlRef.current.value = '';
-      udzFerrRef.current.value = '';
-      img1Ref.current.value = null;
-      img2Ref.current.value =  null;
+    // Clear inputs
+    nrWytRef.current.value = "";
+    rodzMetRef.current.value = "";
+    liczbWydzRef.current.value = "";
+    stpSferRef.current.value = "";
+    udzGrafRef.current.value = "";
+    udzPerlRef.current.value = "";
+    udzFerrRef.current.value = "";
+    img1Ref.current.value = null;
+    img2Ref.current.value = null;
   };
 
+  // Fetching data from database
   async function fetchData() {
     const response = await fetch(
       "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/struktura.json"
@@ -115,7 +136,7 @@ const Struktura = () => {
       setDatas(baseItems);
     }
   }
-
+  // Listing all images and saving it to setImgUrls state
   const listImages = async () => {
     await fetchData();
     setShowTable((prevState) => !prevState);
@@ -247,23 +268,23 @@ const Struktura = () => {
         Pokaż wyniki
       </Button>
       {showTable && (
-        <Table striped bordered variant="dark">
-          <thead>
-            <tr>
+        <Table className={classes.dataTable} striped borderless variant="light">
+          <thead className="tbHead text-center">
+            <tr className="align-items-center">
               <th>Nr wytopu</th>
               <th>Rodzaj metalu</th>
-              <th>Liczba wydzieleń grafitu [1/mm2]</th>
+              <th>Liczba wydzieleń grafitu [1/mm<sup>2</sup>]</th>
               <th>Stopień sferoidalności grafitu [%]</th>
               <th>Udział grafitu [%]</th>
               <th>Udział perlitu [%]</th>
               <th>Udział ferrytu [%]</th>
-              <th style={{ width: "12.5%" }}>Zdjęcia przed trawieniem</th>
+              <th style={{ width: "12.5%" }}>Zdjęcie przed trawieniem</th>
               <th style={{ width: "12.5%" }}>Zdjęcie po trawieniu</th>
               <th>Usuń</th>
             </tr>
           </thead>
-          <tbody>
-            {datas.map((item, i) => {
+          <tbody className="text-center">
+            {currentRecords.map((item, i) => {
               return (
                 <tr key={i} className="align-items-center">
                   <td>{item.nrWyt}</td>
@@ -277,7 +298,7 @@ const Struktura = () => {
                     {imgUrls.map((url, i) => {
                       if (url.includes(`${item.nrWyt}_1`) && countIt < 2) {
                         return (
-                          <a key={i} href={url} target="_blank">
+                          <a key={i} href={url} target="_blank" rel="noopener noreferrer">
                             <img
                               key={i}
                               className={classes.zdj}
@@ -293,7 +314,7 @@ const Struktura = () => {
                     {imgUrls.map((url, i) => {
                       if (url.includes(`${item.nrWyt}_2`) && countIt < 2) {
                         return (
-                          <a key={i} href={url} target="_blank">
+                          <a key={i} href={url} target="_blank" rel="noopener noreferrer">
                             <img
                               key={i}
                               className={classes.zdj}
@@ -305,21 +326,41 @@ const Struktura = () => {
                       }
                     })}
                   </td>
-                  <td className="text-center"><button className={classes.deleteIcon} onClick={() => {
-                    imgUrls.map((url) => {
-                      if(url.includes(`${item.nrWyt}_1`) || url.includes(`${item.nrWyt}_2`)) {
-                        storage.refFromURL(url).delete();
-                      }
-                    });
-                    remove(ref(database, "struktura/" + item.nrWyt))
-                    .then(() => alert("Usunięto rekord z bazy!")).then( document.location.reload())
-                    .catch((error) => alert("Nie udało się usunąć rekordu: " + error));
-                  }}></button></td>
+                  <td className="text-center">
+                    <button
+                      className={classes.deleteIcon}
+                      onClick={() => {
+                        imgUrls.map((url) => {
+                          if (
+                            url.includes(`${item.nrWyt}_1`) ||
+                            url.includes(`${item.nrWyt}_2`)
+                          ) {
+                            storage.refFromURL(url).delete();
+                          }
+                        });
+                        remove(ref(database, "struktura/" + item.nrWyt))
+                          .then(() => alert("Usunięto rekord z bazy!"))
+                          .then(document.location.reload())
+                          .catch((error) =>
+                            alert("Nie udało się usunąć rekordu: " + error)
+                          );
+                      }}
+                    ></button>
+                  </td>
                 </tr>
               );
             })}
           </tbody>
         </Table>
+      )}
+      {showTable && (
+        <Pagination
+          currentPage={currentPage}
+          className={classes.pagination}
+          recPerPage={recPerPage}
+          totalRecs={datas.length}
+          paginate={paginate}
+        />
       )}
     </Layout>
   );

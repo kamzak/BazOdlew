@@ -19,3 +19,24 @@ body {
   padding: 0;
   background-color: #D8E3E7;
 }
+
+/* Pagination */
+.page-item.active .page-link:hover {
+  opacity: 0.7;
+}
+
+.table-light {
+  border-color: #126E82;
+}
+table {
+  border-collapse: collapse;
+}
+th {
+  font-weight: normal;
+  vertical-align: middle;
+}
+.tbHead  tr{
+  --bs-table-bg: '';
+  background-color: #132C33;
+  color: #D8E3E7;
+}
