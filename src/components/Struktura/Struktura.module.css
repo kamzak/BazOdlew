@@ -25,6 +25,10 @@
 }
 
 
+tr td {
+  vertical-align: middle;
+}
+
 .zdj {
   display: inline-block;
   width: 125px;
@@ -36,6 +40,21 @@
   border: 2px solid #126E82;
 }
 
+.deleteIcon {
+  background-image: url("/src/components/static/delete.png");
+  background-size: 30px 30px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 100%;
+}
+
+.deleteIcon:hover {
+  border: 1px solid #126E82;
+  width: 31px;
+  height: 31px;
+}
 
 progress[value] {
   width: 100%;

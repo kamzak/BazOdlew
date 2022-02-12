@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { Form, Button, Col, Row, FormControl, Table } from "react-bootstrap";
 import { storage, database } from "../../firebase/firebase";
-import { getDatabase, ref, set } from "firebase/database";
+import { ref, set, remove } from "firebase/database";
+import deleteIcon from '../static/delete.png';
 
 import Layout from "../Layout/Layout";
 import classes from "./Struktura.module.css";
@@ -258,6 +259,7 @@ const Struktura = () => {
               <th>Udział ferrytu [%]</th>
               <th style={{ width: "12.5%" }}>Zdjęcia przed trawieniem</th>
               <th style={{ width: "12.5%" }}>Zdjęcie po trawieniu</th>
+              <th>Usuń</th>
             </tr>
           </thead>
           <tbody>
@@ -303,6 +305,16 @@ const Struktura = () => {
                       }
                     })}
                   </td>
+                  <td className="text-center"><button className={classes.deleteIcon} onClick={() => {
+                    imgUrls.map((url) => {
+                      if(url.includes(`${item.nrWyt}_1`) || url.includes(`${item.nrWyt}_2`)) {
+                        storage.refFromURL(url).delete();
+                      }
+                    });
+                    remove(ref(database, "struktura/" + item.nrWyt))
+                    .then(() => alert("Usunięto rekord z bazy!")).then( document.location.reload())
+                    .catch((error) => alert("Nie udało się usunąć rekordu: " + error));
+                  }}></button></td>
                 </tr>
               );
             })}
