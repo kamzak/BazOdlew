@@ -98,3 +98,8 @@ progress[value] {
 .dataTable, thead, tbody, tr, td, th {
   border: 1px solid #126E82;
 }
+
+.errorMessage {
+  text-align: center;
+  color:red;
+}

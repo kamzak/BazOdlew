@@ -14,6 +14,9 @@ const Struktura = () => {
   const [imgUrls, setImgUrls] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [datas, setDatas] = useState([]);
+  const [btnTableText, setBtnTableText] = useState(false);
+  const [showText, setShowText] = useState('Pokaż wyniki');
+  const [formIsValid, setFormIsValid] = useState(false);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,6 +40,7 @@ const Struktura = () => {
   const udzFerrRef = useRef();
   const img1Ref = useRef();
   const img2Ref = useRef();
+  const showBtnRef = useRef();
 
   // Insert first image func
   const handleChange1 = (e) => {
@@ -63,6 +67,10 @@ const Struktura = () => {
   // On submit form func
   const sendData = async (event) => {
     event.preventDefault();
+    if(nrWytRef.current.value === ''){
+      formIsValid(false);
+      return;
+    }
     let count = 1;
     const promises = [];
     await set(ref(database, "struktura/" + nrWytRef.current.value), {
@@ -133,8 +141,15 @@ const Struktura = () => {
       setDatas(baseItems);
     }
   }
+
   // Listing all images and saving it to setImgUrls state
   const listImages = async () => {
+    if(btnTableText) {
+      setShowText('Pokaż wyniki');
+    } else {
+      setShowText('Ukryj wyniki');
+    }
+    setBtnTableText(prevState => !prevState);
     await fetchData();
     setShowTable((prevState) => !prevState);
     if (!showTable) {
@@ -277,10 +292,10 @@ const Struktura = () => {
         </Button>
       </Form>
       <progress value={progress} max="100" />
-      <Button onClick={listImages} className={classes.showBtn}>
-        Pokaż wyniki
+      <Button disabled={formIsValid} onClick={listImages} className={classes.showBtn} ref={showBtnRef}>
+        {showText}
       </Button>
-      {showTable && (
+      {showTable && (currentRecords.length > 0) && (
         <Table className={classes.dataTable} striped borderless variant="light">
           <thead className="tbHead text-center">
             <tr className="align-items-center">
@@ -326,7 +341,9 @@ const Struktura = () => {
                               alt=""
                             />
                             <div className={classes.middle}>
-                              <div className={classes.text}>Kliknij aby powiększyć</div>
+                              <div className={classes.text}>
+                                Kliknij aby powiększyć
+                              </div>
                             </div>
                           </a>
                         );
@@ -350,7 +367,9 @@ const Struktura = () => {
                               alt=""
                             />
                             <div className={classes.middle}>
-                              <div className={classes.text}>Kliknij aby powiększyć</div>
+                              <div className={classes.text}>
+                                Kliknij aby powiększyć
+                              </div>
                             </div>
                           </a>
                         );
@@ -371,8 +390,10 @@ const Struktura = () => {
                           }
                         });
                         remove(ref(database, "struktura/" + item.nrWyt))
-                          .then(() => alert("Usunięto rekord z bazy!"))
-                          .then(setInterval(() => document.location.reload(), 2000))
+                          .then(() => {
+                            alert("Usunięto rekord z bazy!");
+                            document.location.reload();
+                          })
                           .catch((error) =>
                             alert("Nie udało się usunąć rekordu: " + error)
                           );
@@ -385,7 +406,7 @@ const Struktura = () => {
           </tbody>
         </Table>
       )}
-      {showTable && (
+      {showTable && (currentRecords.length > 0) && (
         <Pagination
           currentPage={currentPage}
           className={classes.pagination}
@@ -394,6 +415,7 @@ const Struktura = () => {
           paginate={paginate}
         />
       )}
+      {showTable && (currentRecords.length === 0) && <p className={classes.errorMessage}>Brak wyników w bazie!</p>}
     </Layout>
   );
 };
