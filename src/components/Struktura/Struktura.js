@@ -360,7 +360,8 @@ const Struktura = () => {
                   <td className="text-center">
                     <button
                       className={classes.deleteIcon}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         imgUrls.map((url) => {
                           if (
                             url.includes(`${item.nrWyt}_1`) ||
@@ -371,7 +372,7 @@ const Struktura = () => {
                         });
                         remove(ref(database, "struktura/" + item.nrWyt))
                           .then(() => alert("Usunięto rekord z bazy!"))
-                          .then(document.location.reload())
+                          .then(setInterval(() => document.location.reload(), 2000))
                           .catch((error) =>
                             alert("Nie udało się usunąć rekordu: " + error)
                           );
