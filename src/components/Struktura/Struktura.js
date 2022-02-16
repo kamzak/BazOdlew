@@ -4,6 +4,7 @@ import { storage, database } from "../../firebase/firebase";
 import { ref, set, remove } from "firebase/database";
 
 import Layout from "../Layout/Layout";
+import Modal from "../UI/Modal";
 import Pagination from "../Layout/Pagination";
 import classes from "./Struktura.module.css";
 
@@ -15,8 +16,10 @@ const Struktura = () => {
   const [showTable, setShowTable] = useState(false);
   const [datas, setDatas] = useState([]);
   const [btnTableText, setBtnTableText] = useState(false);
-  const [showText, setShowText] = useState('Pokaż wyniki');
+  const [showText, setShowText] = useState("Pokaż wyniki");
   const [formIsValid, setFormIsValid] = useState(false);
+  const [showAddAlert, setAddShowAlert] = useState(false);
+  const [showRemoveAlert, setRemoveShowAlert] = useState(false);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,7 +70,7 @@ const Struktura = () => {
   // On submit form func
   const sendData = async (event) => {
     event.preventDefault();
-    if(nrWytRef.current.value === ''){
+    if (nrWytRef.current.value === "") {
       formIsValid(false);
       return;
     }
@@ -104,8 +107,8 @@ const Struktura = () => {
     );
 
     Promise.all(promises)
-      .then(() => alert("Dane zostały wprowadzone do bazy danych!"))
-      .then(() => document.location.reload())
+      .then(setAddShowAlert(true))
+      .then(setTimeout(() => setAddShowAlert(false), 3000))
       .catch((err) => console.log(err));
 
     // Clear inputs
@@ -144,12 +147,12 @@ const Struktura = () => {
 
   // Listing all images and saving it to setImgUrls state
   const listImages = async () => {
-    if(btnTableText) {
-      setShowText('Pokaż wyniki');
+    if (btnTableText) {
+      setShowText("Pokaż wyniki");
     } else {
-      setShowText('Ukryj wyniki');
+      setShowText("Ukryj wyniki");
     }
-    setBtnTableText(prevState => !prevState);
+    setBtnTableText((prevState) => !prevState);
     await fetchData();
     setShowTable((prevState) => !prevState);
     if (!showTable) {
@@ -170,6 +173,10 @@ const Struktura = () => {
     } else {
       setImgUrls([]);
     }
+  };
+  const closeAlertHandler = (props) => {
+    setAddShowAlert(false);
+    setRemoveShowAlert(false);
   };
 
   return (
@@ -285,17 +292,28 @@ const Struktura = () => {
               type="file"
               onChange={handleChange2}
             />
+            <progress value={progress} max="100" />
           </Col>
         </Row>
         <Button onClick={sendData} className={classes.submitBtn} type="submit">
           Dodaj wyniki
         </Button>
+        {showAddAlert && (
+          <Modal onClose={closeAlertHandler}>
+            Wprowadzono wyniki do bazy danych!
+          </Modal>
+        )}
       </Form>
-      <progress value={progress} max="100" />
-      <Button disabled={formIsValid} onClick={listImages} className={classes.showBtn} ref={showBtnRef}>
+
+      <Button
+        disabled={formIsValid}
+        onClick={listImages}
+        className={classes.showBtn}
+        ref={showBtnRef}
+      >
         {showText}
       </Button>
-      {showTable && (currentRecords.length > 0) && (
+      {showTable && currentRecords.length > 0 && (
         <Table className={classes.dataTable} striped borderless variant="light">
           <thead className="tbHead text-center">
             <tr className="align-items-center">
@@ -390,10 +408,8 @@ const Struktura = () => {
                           }
                         });
                         remove(ref(database, "struktura/" + item.nrWyt))
-                          .then(() => {
-                            alert("Usunięto rekord z bazy!");
-                            document.location.reload();
-                          })
+                          .then(setRemoveShowAlert(true))
+                          .then(setTimeout(() => setRemoveShowAlert(false), 3000))
                           .catch((error) =>
                             alert("Nie udało się usunąć rekordu: " + error)
                           );
@@ -406,7 +422,10 @@ const Struktura = () => {
           </tbody>
         </Table>
       )}
-      {showTable && (currentRecords.length > 0) && (
+      {showRemoveAlert && (
+        <Modal onClose={closeAlertHandler}>Usunięto rekord z bazy!</Modal>
+      )}
+      {showTable && currentRecords.length > 0 && (
         <Pagination
           currentPage={currentPage}
           className={classes.pagination}
@@ -415,7 +434,9 @@ const Struktura = () => {
           paginate={paginate}
         />
       )}
-      {showTable && (currentRecords.length === 0) && <p className={classes.errorMessage}>Brak wyników w bazie!</p>}
+      {showTable && currentRecords.length === 0 && (
+        <p className={classes.errorMessage}>Brak wyników w bazie!</p>
+      )}
     </Layout>
   );
 };
