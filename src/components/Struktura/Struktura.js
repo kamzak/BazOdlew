@@ -23,7 +23,7 @@ const Struktura = () => {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [recPerPage] = useState(3);
+  const [recPerPage] = useState(8);
 
   // Pagination func setting current page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -110,8 +110,8 @@ const Struktura = () => {
     Promise.all(promises)
       .then(setAddShowAlert(true))
       .then(setTimeout(() => setAddShowAlert(false), 3000))
-      .then(setTimeout(() => fetchImages(), 1500))
-      .then(setTimeout(() => fetchData(), 1500))
+      .then(setTimeout(() => fetchImages(), 500))
+      .then(setTimeout(() => fetchData(), 500))
       .catch((err) => console.log(err));
 
     // Clear inputs
@@ -166,6 +166,7 @@ const Struktura = () => {
       .catch((err) => {
         alert(err.message);
       });
+
   };
 
   const listImages = async () => {
