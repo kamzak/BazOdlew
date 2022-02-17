@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Form, Button, Col, Row, FormControl, Table } from "react-bootstrap";
 import { storage, database } from "../../firebase/firebase";
 import { ref, set, remove } from "firebase/database";
@@ -109,6 +109,8 @@ const Struktura = () => {
     Promise.all(promises)
       .then(setAddShowAlert(true))
       .then(setTimeout(() => setAddShowAlert(false), 3000))
+      .then(setTimeout(() => fetchImages(), 1500))
+      .then(fetchData())
       .catch((err) => console.log(err));
 
     // Clear inputs
@@ -141,11 +143,30 @@ const Struktura = () => {
         udzPerl: data[key].udzPerl,
         udzFerr: data[key].udzFerr,
       });
-      setDatas(baseItems);
     }
-  }
+    setDatas(baseItems);
+  };
 
   // Listing all images and saving it to setImgUrls state
+
+  const fetchImages = async () => {
+    await storage
+      .ref()
+      .child("images/")
+      .listAll()
+      .then(setImgUrls([]))
+      .then((res) => {
+        res.items.forEach((item) => {
+          item.getDownloadURL().then((url) => {
+              setImgUrls((arr) => [...arr, url]);
+          });
+        });
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
+  };
+
   const listImages = async () => {
     if (btnTableText) {
       setShowText("Pokaż wyniki");
@@ -153,27 +174,12 @@ const Struktura = () => {
       setShowText("Ukryj wyniki");
     }
     setBtnTableText((prevState) => !prevState);
-    await fetchData();
+    
     setShowTable((prevState) => !prevState);
-    if (!showTable) {
-      await storage
-        .ref()
-        .child("images/")
-        .listAll()
-        .then((res) => {
-          res.items.forEach((item) => {
-            item.getDownloadURL().then((url) => {
-              setImgUrls((arr) => [...arr, url]);
-            });
-          });
-        })
-        .catch((err) => {
-          alert(err.message);
-        });
-    } else {
-      setImgUrls([]);
-    }
+    fetchImages();
+    await fetchData();
   };
+
   const closeAlertHandler = (props) => {
     setAddShowAlert(false);
     setRemoveShowAlert(false);
@@ -409,7 +415,10 @@ const Struktura = () => {
                         });
                         remove(ref(database, "struktura/" + item.nrWyt))
                           .then(setRemoveShowAlert(true))
-                          .then(setTimeout(() => setRemoveShowAlert(false), 3000))
+                          .then(
+                            setTimeout(() => setRemoveShowAlert(false), 3000)
+                          )
+                          .then(setTimeout(() => fetchData(), 500))
                           .catch((error) =>
                             alert("Nie udało się usunąć rekordu: " + error)
                           );
