@@ -106,11 +106,12 @@ const Struktura = () => {
       })
     );
 
+
     Promise.all(promises)
       .then(setAddShowAlert(true))
       .then(setTimeout(() => setAddShowAlert(false), 3000))
       .then(setTimeout(() => fetchImages(), 1500))
-      .then(fetchData())
+      .then(setTimeout(() => fetchData(), 1500))
       .catch((err) => console.log(err));
 
     // Clear inputs
