@@ -126,7 +126,7 @@ const Wlmech = () => {
   };
 
   return (
-    <Layout className={classes.wlmech}>
+    <Layout title='wlmech' className={classes.wlmech}>
       <h1 className={classes.wlmech__title}>
         Formularz dodania wyników - właściwości mechaniczne
       </h1>

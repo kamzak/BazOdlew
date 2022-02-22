@@ -8,7 +8,7 @@ const Layout = (props) => {
   return (
     <Fragment>
       <Header>
-        <Navi />
+        <Navi title={props.title} />
       </Header>
       <Content>{props.children}</Content>
       <Footer />

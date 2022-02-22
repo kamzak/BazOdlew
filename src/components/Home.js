@@ -91,7 +91,7 @@ const Home = () => {
 
 
   return (
-    <Layout>
+    <Layout title='home'>
       <div>
         <h1>Załaduj zdjęcie</h1>
         <progress value={progress} max="100" />

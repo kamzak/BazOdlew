@@ -113,7 +113,7 @@ const Podsumowanie = () => {
   };
 
   return (
-    <Layout>
+    <Layout title='podsumowanie'>
       <h1 className={classes.pods__title}>Podsumowanie wyników</h1>
       <Form>
         <Row>

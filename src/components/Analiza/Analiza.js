@@ -148,7 +148,7 @@ const Analiza = () => {
   };
 
   return (
-    <Layout className={classes.analiza}>
+    <Layout title='analiza' className={classes.analiza}>
       <h1 className={classes.analiza__title}>
         Formularz dodania wyników - analiza chemiczna
       </h1>

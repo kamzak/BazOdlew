@@ -4,7 +4,6 @@
 }
 
 .home {
-    background-color: #126E82;
     border-radius: 0.25rem;
     text-align: center;
 }
@@ -15,6 +14,7 @@
 
 .links {
     color: #D8E3E7 !important;
+    border-radius: 0.25rem;
     text-align: center;
 }
 

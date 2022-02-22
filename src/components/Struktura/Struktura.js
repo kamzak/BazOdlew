@@ -190,7 +190,7 @@ const Struktura = () => {
   };
 
   return (
-    <Layout className={classes.struktura}>
+    <Layout title='struktura' className={classes.struktura}>
       <h1 className={classes.struktura__title}>
         Formularz dodania wyników - struktura
       </h1>
