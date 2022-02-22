@@ -35,6 +35,7 @@ const Struktura = () => {
 
   // Ref's for inputs
   const nrWytRef = useRef();
+  const gatunekRef = useRef();
   const rodzMetRef = useRef();
   const liczbWydzRef = useRef();
   const stpSferRef = useRef();
@@ -78,6 +79,7 @@ const Struktura = () => {
     const promises = [];
     await set(ref(database, "struktura/" + nrWytRef.current.value), {
       nrWyt: nrWytRef.current.value,
+      gatunek: gatunekRef.current.value,
       rodzMet: rodzMetRef.current.value,
       liczbWydz: liczbWydzRef.current.value,
       stpSfer: stpSferRef.current.value,
@@ -106,7 +108,6 @@ const Struktura = () => {
       })
     );
 
-
     Promise.all(promises)
       .then(setAddShowAlert(true))
       .then(setTimeout(() => setAddShowAlert(false), 3000))
@@ -116,6 +117,7 @@ const Struktura = () => {
 
     // Clear inputs
     nrWytRef.current.value = "";
+    gatunekRef.current.value = "";
     rodzMetRef.current.value = "";
     liczbWydzRef.current.value = "";
     stpSferRef.current.value = "";
@@ -137,6 +139,7 @@ const Struktura = () => {
       baseItems.push({
         id: key,
         nrWyt: data[key].nrWyt,
+        gatunek: data[key].gatunek,
         rodzMet: data[key].rodzMet,
         liczbWydz: data[key].liczbWydz,
         stpSfer: data[key].stpSfer,
@@ -146,7 +149,7 @@ const Struktura = () => {
       });
     }
     setDatas(baseItems);
-  };
+  }
 
   // Listing all images and saving it to setImgUrls state
 
@@ -159,14 +162,13 @@ const Struktura = () => {
       .then((res) => {
         res.items.forEach((item) => {
           item.getDownloadURL().then((url) => {
-              setImgUrls((arr) => [...arr, url]);
+            setImgUrls((arr) => [...arr, url]);
           });
         });
       })
       .catch((err) => {
         alert(err.message);
       });
-
   };
 
   const listImages = async () => {
@@ -176,7 +178,7 @@ const Struktura = () => {
       setShowText("Ukryj wyniki");
     }
     setBtnTableText((prevState) => !prevState);
-    
+
     setShowTable((prevState) => !prevState);
     fetchImages();
     await fetchData();
@@ -195,7 +197,7 @@ const Struktura = () => {
       <p>Wprowadź dane:</p>
       <Form>
         <Row className="align-items-center">
-          <Col xs={12} sm={6} xl={3} className="mb-3">
+          <Col xs={12} sm={6} xl={6} className="mb-3">
             <Form.Label htmlFor="inlineFormInputName">Nr wytopu</Form.Label>
             <Form.Control
               ref={nrWytRef}
@@ -205,17 +207,7 @@ const Struktura = () => {
               min="0"
             />
           </Col>
-          <Col xs={12} sm={6} xl={3} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputGroupUsername">
-              Rodzaj metalu
-            </Form.Label>
-            <FormControl
-              ref={rodzMetRef}
-              id="inlineFormInputGroupUsername"
-              placeholder="Np. sfero, ADI, szare, SiMo itd."
-            />
-          </Col>
-          <Col xs={12} sm={6} xl={3} className="mb-3">
+          <Col xs={12} sm={6} xl={6} className="mb-3">
             <Form.Label htmlFor="inlineFormInputName">
               Liczba wydzieleń grafitu [1/mm<sup>2</sup>]
             </Form.Label>
@@ -227,7 +219,30 @@ const Struktura = () => {
               min="0"
             />
           </Col>
-          <Col xs={12} sm={6} xl={3} className="mb-3">
+          <Col xs={12} sm={6} xl={6} className="mb-3">
+            <Form.Label htmlFor="inlineFormInputGroupUsername">
+              Gatunek
+            </Form.Label>
+            <FormControl
+              ref={gatunekRef}
+              id="inlineFormInputGroupUsername"
+              type="text"
+              list="gatunek"
+              placeholder="Np. GJS 500-7"
+            />
+            <datalist id="gatunek">
+              <option value="GJS-400-18 LT" />
+              <option value="GJS-400-18" />
+              <option value="GJS-400-15" />
+              <option value="GJS-500-7" />
+              <option value="GJS-600-3" />
+              <option value="GJL-150" />
+              <option value="GJL-200" />
+              <option value="GJL-250" />
+              <option value="GJL-300" />
+            </datalist>
+          </Col>
+          <Col xs={12} sm={6} xl={6} className="mb-3">
             <Form.Label htmlFor="inlineFormInputGroupUsername">
               Stopień sferoidalności grafitu [%]
             </Form.Label>
@@ -240,6 +255,27 @@ const Struktura = () => {
               max="100"
             />
           </Col>
+          <Col xs={12} sm={6} xl={6} className="mb-3">
+            <Form.Label htmlFor="inlineFormInputGroupUsername">
+              Rodzaj metalu
+            </Form.Label>
+            <FormControl
+              ref={rodzMetRef}
+              id="inlineFormInputGroupUsername"
+              type="text"
+              list="rodzMet"
+              placeholder="Np. sfero, ADI, szare, SiMo itd."
+            />
+            <datalist id="rodzMet">
+              <option value="Żeliwo sferoidalne" />
+              <option value="Żeliwo ADI" />
+              <option value="Żeliwo szare" />
+              <option value="Żeliwo białe" />
+              <option value="Żeliwo wermikularne" />
+              <option value="Żeliwo SiMo" />
+            </datalist>
+          </Col>
+
           <Col xs={12} sm={6} xl={3} className="mb-3">
             <Form.Label htmlFor="inlineFormInputName">
               Udział grafitu [%]
@@ -266,7 +302,19 @@ const Struktura = () => {
               max="100"
             />
           </Col>
-          <Col xs={12} sm={6} xl={3} className="mb-3">
+            <Col xs={12} sm={6} xl={6} className="mb-3">
+              <Form.Label htmlFor="inlineFormInputGroupUsername">
+                Zdjęcie struktury przed trawieniem
+              </Form.Label>
+              <FormControl
+                id="inlineFormInputGroupUsername"
+                ref={img1Ref}
+                placeholder="Zdjęcie przed trawieniem"
+                type="file"
+                onChange={handleChange1}
+              />
+            </Col>
+            <Col xs={12} sm={6} xl={3} className="mb-3">
             <Form.Label htmlFor="inlineFormInputName">
               Udział ferrytu [%]
             </Form.Label>
@@ -279,159 +327,173 @@ const Struktura = () => {
               max="100"
             />
           </Col>
-          <Col xs={12} sm={6} xl={3} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputGroupUsername">
-              Zdjęcie struktury przed trawieniem
-            </Form.Label>
-            <FormControl
-              id="inlineFormInputGroupUsername"
-              ref={img1Ref}
-              placeholder="Zdjęcie przed trawieniem"
-              type="file"
-              onChange={handleChange1}
-            />
-            <Form.Label htmlFor="inlineFormInputGroupUsername">
-              Zdjęcie struktury po trawieniu
-            </Form.Label>
-            <FormControl
-              id="inlineFormInputGroupUsername"
-              ref={img2Ref}
-              placeholder="Zdjęcie po trawieniu"
-              type="file"
-              onChange={handleChange2}
-            />
-            <progress value={progress} max="100" />
+            <Col xs={12} sm={6} xl={6} className="mb-3">
+              <Form.Label htmlFor="inlineFormInputGroupUsername">
+                Zdjęcie struktury po trawieniu
+              </Form.Label>
+              <FormControl
+                id="inlineFormInputGroupUsername"
+                ref={img2Ref}
+                placeholder="Zdjęcie po trawieniu"
+                type="file"
+                onChange={handleChange2}
+              />
+              <progress value={progress} max="100" />
+            </Col>
+            
+          
+        </Row>
+        <Row className="align-items-center">
+          <Col xs={12} sm={12} xl={6} className="offset-xl-3">
+            <Button
+              onClick={sendData}
+              className={classes.submitBtn}
+              type="submit"
+            >
+              Dodaj wyniki
+            </Button>
           </Col>
         </Row>
-        <Button onClick={sendData} className={classes.submitBtn} type="submit">
-          Dodaj wyniki
-        </Button>
+
         {showAddAlert && (
           <Modal onClose={closeAlertHandler}>
             Wprowadzono wyniki do bazy danych!
           </Modal>
         )}
       </Form>
+      <Row>
+        <Col xs={12} sm={6} xl={2}>
+          <Button
+            disabled={formIsValid}
+            onClick={listImages}
+            className={classes.showBtn}
+            ref={showBtnRef}
+          >
+            {showText}
+          </Button>
+        </Col>
+      </Row>
 
-      <Button
-        disabled={formIsValid}
-        onClick={listImages}
-        className={classes.showBtn}
-        ref={showBtnRef}
-      >
-        {showText}
-      </Button>
       {showTable && currentRecords.length > 0 && (
-        <Table className={classes.dataTable} striped borderless variant="light">
-          <thead className="tbHead text-center">
-            <tr className="align-items-center">
-              <th>Nr wytopu</th>
-              <th>Rodzaj metalu</th>
-              <th>
-                Liczba wydzieleń grafitu [1/mm<sup>2</sup>]
-              </th>
-              <th>Stopień sferoidalności grafitu [%]</th>
-              <th>Udział grafitu [%]</th>
-              <th>Udział perlitu [%]</th>
-              <th>Udział ferrytu [%]</th>
-              <th style={{ width: "12.5%" }}>Zdjęcie przed trawieniem</th>
-              <th style={{ width: "12.5%" }}>Zdjęcie po trawieniu</th>
-              <th>Usuń</th>
-            </tr>
-          </thead>
-          <tbody className="text-center">
-            {currentRecords.map((item, i) => {
-              return (
-                <tr key={i} className="align-items-center">
-                  <td>{item.nrWyt}</td>
-                  <td>{item.rodzMet}</td>
-                  <td>{item.liczbWydz}</td>
-                  <td>{item.stpSfer}</td>
-                  <td>{item.udzGraf}</td>
-                  <td>{item.udzPerl}</td>
-                  <td>{item.udzFerr}</td>
-                  <td className={classes.imgCont}>
-                    {imgUrls.map((url, i) => {
-                      if (url.includes(`${item.nrWyt}_1`)) {
-                        return (
-                          <a
-                            key={i}
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <img
+        <div className="table-responsive">
+          <Table
+            className={classes.dataTable}
+            striped
+            borderless
+            variant="light"
+          >
+            <thead className="tbHead text-center">
+              <tr className="align-items-center">
+                <th>Nr wytopu</th>
+                <th>Gatunek</th>
+                <th>Rodzaj metalu</th>
+                <th>
+                  Liczba wydzieleń grafitu [1/mm<sup>2</sup>]
+                </th>
+                <th>Stopień sferoidalności grafitu [%]</th>
+                <th>Udział grafitu [%]</th>
+                <th>Udział perlitu [%]</th>
+                <th>Udział ferrytu [%]</th>
+                <th style={{ width: "12.5%" }}>Zdjęcie przed trawieniem</th>
+                <th style={{ width: "12.5%" }}>Zdjęcie po trawieniu</th>
+                <th>Usuń</th>
+              </tr>
+            </thead>
+            <tbody className="text-center">
+              {currentRecords.map((item, i) => {
+                return (
+                  <tr key={i} className="align-items-center">
+                    <td>{item.nrWyt}</td>
+                    <td>{item.gatunek}</td>
+                    <td>{item.rodzMet}</td>
+                    <td>{item.liczbWydz}</td>
+                    <td>{item.stpSfer}</td>
+                    <td>{item.udzGraf}</td>
+                    <td>{item.udzPerl}</td>
+                    <td>{item.udzFerr}</td>
+                    <td className={classes.imgCont}>
+                      {imgUrls.map((url, i) => {
+                        if (url.includes(`${item.nrWyt}_1`)) {
+                          return (
+                            <a
                               key={i}
-                              className={classes.zdj}
-                              src={url}
-                              alt=""
-                            />
-                            <div className={classes.middle}>
-                              <div className={classes.text}>
-                                Kliknij aby powiększyć
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <img
+                                key={i}
+                                className={classes.zdj}
+                                src={url}
+                                alt=""
+                              />
+                              <div className={classes.middle}>
+                                <div className={classes.text}>
+                                  Kliknij aby powiększyć
+                                </div>
                               </div>
-                            </div>
-                          </a>
-                        );
-                      }
-                    })}
-                  </td>
-                  <td className={classes.imgCont}>
-                    {imgUrls.map((url, i) => {
-                      if (url.includes(`${item.nrWyt}_2`)) {
-                        return (
-                          <a
-                            key={i}
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <img
-                              key={i}
-                              className={classes.zdj}
-                              src={url}
-                              alt=""
-                            />
-                            <div className={classes.middle}>
-                              <div className={classes.text}>
-                                Kliknij aby powiększyć
-                              </div>
-                            </div>
-                          </a>
-                        );
-                      }
-                    })}
-                  </td>
-                  <td className="text-center">
-                    <button
-                      className={classes.deleteIcon}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        imgUrls.map((url) => {
-                          if (
-                            url.includes(`${item.nrWyt}_1`) ||
-                            url.includes(`${item.nrWyt}_2`)
-                          ) {
-                            storage.refFromURL(url).delete();
-                          }
-                        });
-                        remove(ref(database, "struktura/" + item.nrWyt))
-                          .then(setRemoveShowAlert(true))
-                          .then(
-                            setTimeout(() => setRemoveShowAlert(false), 3000)
-                          )
-                          .then(setTimeout(() => fetchData(), 500))
-                          .catch((error) =>
-                            alert("Nie udało się usunąć rekordu: " + error)
+                            </a>
                           );
-                      }}
-                    ></button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
+                        }
+                      })}
+                    </td>
+                    <td className={classes.imgCont}>
+                      {imgUrls.map((url, i) => {
+                        if (url.includes(`${item.nrWyt}_2`)) {
+                          return (
+                            <a
+                              key={i}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <img
+                                key={i}
+                                className={classes.zdj}
+                                src={url}
+                                alt=""
+                              />
+                              <div className={classes.middle}>
+                                <div className={classes.text}>
+                                  Kliknij aby powiększyć
+                                </div>
+                              </div>
+                            </a>
+                          );
+                        }
+                      })}
+                    </td>
+                    <td className="text-center">
+                      <button
+                        className={classes.deleteIcon}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          imgUrls.map((url) => {
+                            if (
+                              url.includes(`${item.nrWyt}_1`) ||
+                              url.includes(`${item.nrWyt}_2`)
+                            ) {
+                              storage.refFromURL(url).delete();
+                            }
+                          });
+                          remove(ref(database, "struktura/" + item.nrWyt))
+                            .then(setRemoveShowAlert(true))
+                            .then(
+                              setTimeout(() => setRemoveShowAlert(false), 3000)
+                            )
+                            .then(setTimeout(() => fetchData(), 500))
+                            .catch((error) =>
+                              alert("Nie udało się usunąć rekordu: " + error)
+                            );
+                        }}
+                      ></button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </div>
       )}
       {showRemoveAlert && (
         <Modal onClose={closeAlertHandler}>Usunięto rekord z bazy!</Modal>
