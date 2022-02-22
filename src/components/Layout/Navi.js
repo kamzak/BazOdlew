@@ -4,27 +4,59 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import classes from "./Navi.module.css";
 
 const Navi = (props) => {
-  let toggleClass = { backgroundColor: '#126E82',  color: "white", padding: "0.5rem" };
-  let homeClass = { backgroundColor: '',  color: "white", padding: "0.5rem" };
-  let analizaClass = { backgroundColor: '',  color: "white", padding: "0.5rem" };
-  let strukturaClass = { backgroundColor: '',  color: "white", padding: "0.5rem" };
-  let wlmechClass = { backgroundColor: '',  color: "white", padding: "0.5rem" };
-  let podsumowanieClass = { backgroundColor: '',  color: "white", padding: "0.5rem" };
+  let toggleClass = {
+    backgroundColor: "#126E82",
+    color: "white",
+    padding: "0.5rem",
+  };
+  let homeClass = { backgroundColor: "", color: "white", padding: "0.5rem" };
+  let analizaClass = { backgroundColor: "", color: "white", padding: "0.5rem" };
+  let strukturaClass = {
+    backgroundColor: "",
+    color: "white",
+    padding: "0.5rem",
+  };
+  let wlmechClass = { backgroundColor: "", color: "white", padding: "0.5rem" };
+  let podsumowanieClass = {
+    backgroundColor: "",
+    color: "white",
+    padding: "0.5rem",
+  };
 
   if (props.title === "home") {
-    homeClass = { backgroundColor: '#126E82',  color: "white", padding: "0.5rem" };
+    homeClass = {
+      backgroundColor: "#126E82",
+      color: "white",
+      padding: "0.5rem",
+    };
   }
-  if(props.title === "analiza") {
-    analizaClass = { backgroundColor: '#126E82',  color: "white", padding: "0.5rem" }
+  if (props.title === "analiza") {
+    analizaClass = {
+      backgroundColor: "#126E82",
+      color: "white",
+      padding: "0.5rem",
+    };
   }
-  if(props.title === "struktura") {
-    strukturaClass = { backgroundColor: '#126E82',  color: "white", padding: "0.5rem" }
+  if (props.title === "struktura") {
+    strukturaClass = {
+      backgroundColor: "#126E82",
+      color: "white",
+      padding: "0.5rem",
+    };
   }
-  if(props.title === "wlmech") {
-    wlmechClass = { backgroundColor: '#126E82',  color: "white", padding: "0.5rem" }
+  if (props.title === "wlmech") {
+    wlmechClass = {
+      backgroundColor: "#126E82",
+      color: "white",
+      padding: "0.5rem",
+    };
   }
-  if(props.title === "podsumowanie") {
-    podsumowanieClass = { backgroundColor: '#126E82',  color: "white", padding: "0.5rem" }
+  if (props.title === "podsumowanie") {
+    podsumowanieClass = {
+      backgroundColor: "#126E82",
+      color: "white",
+      padding: "0.5rem",
+    };
   }
 
   return (
