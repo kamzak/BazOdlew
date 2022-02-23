@@ -133,7 +133,7 @@ const Podsumowanie = () => {
       <Form>
         <Row>
           <Form.Label htmlFor="nrwytopu">Nr wytopu:</Form.Label>
-          <Col xs={6} sm={4} xl={3}>
+          <Col xs={6} sm={6} xl={3}>
             <FormControl
               id="nrwytopu"
               type="text"
@@ -141,12 +141,12 @@ const Podsumowanie = () => {
               ref={szukajRef}
             />
           </Col>
-          <Col xs={6} sm={4} xl={2}>
+          <Col xs={6} sm={6} xl={2}>
             <Button onClick={searchData} className={classes.search}>
               Szukaj
             </Button>
           </Col>
-          <Col className="offset-xl-4" sm={4} xl={3}>
+          <Col className="offset-xl-4" sm={6} xl={3}>
             <Button onClick={generatePDF} className={classes.generate}>
               Generuj PDF
             </Button>

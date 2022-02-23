@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import Navi from "./Navi";
 import Content from "./Content";
 
+
 const Layout = (props) => {
   return (
     <Fragment>
@@ -11,7 +12,7 @@ const Layout = (props) => {
         <Navi title={props.title} />
       </Header>
       <Content>{props.children}</Content>
-      <Footer />
+      <Footer/>
     </Fragment>
   );
 };

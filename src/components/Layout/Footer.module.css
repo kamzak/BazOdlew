@@ -1,7 +1,11 @@
 .footer {
     background-color: #132C33;
-    padding: 1rem;
+    padding: 1rem 0;
     text-align: center;
     color: #D8E3E7;
     margin-top: 1rem;
+    position: fixed;
+    width: 100%;
+    left: 0;
+    bottom: 0;
 }
