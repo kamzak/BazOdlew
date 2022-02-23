@@ -1,128 +1,25 @@
 import Layout from "./Layout/Layout";
-import { useCallback, useState } from "react";
-import { storage } from "../firebase/firebase";
+import classes from './Home.module.css';
 
 const Home = () => {
-  const [images, setImages] = useState([]);
-  const [urls, setUrls] = useState([]);
-  const [progress, setProgress] = useState(0);
-  const [wytop, setWytop] = useState();
-  const [data, setData] = useState([]);
-  const [imgUrls, setImgUrls] = useState([]);
-
-  function handleChange(e) {
-    for (let i = 0; i < e.target.files.length; i++) {
-      if (e.target.files[0]) {
-        const newImage = e.target.files[i];
-        newImage["id"] = Math.random();
-        setImages((prevState) => [...prevState, newImage]);
-      }
-    }
-  }
-  function wytopHandler(e) {
-    setWytop(e.target.value);
-  }
-  function handleUpload(e) {
-    const promises = [];
-    images.map((image) => {
-      const uploadTask = storage.ref(`/images/${image.name}`).put(image);
-      promises.push(uploadTask);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setProgress(progress);
-        },
-        (error) => {
-          console.log(error);
-        },
-        async () => {
-          await storage
-            .ref("images")
-            .child(image.name)
-            .getDownloadURL()
-            .then((urls) => {
-              setUrls((prevState) => [...prevState, urls]);
-            });
-        }
-      );
-    });
-
-    Promise.all(promises)
-      .then(() => alert("All images uploaded"))
-      .catch((err) => console.log(err));
-  }
-
-  console.log("image: ", images);
-  console.log("urls", urls);
-
-  const listItem = async () => {
-    await storage
-      .ref()
-      .child("images/")
-      .listAll()
-      .then((res) => {
-        res.items.forEach((item) => {
-          setData((arr) => [...arr, item.name]);
-        });
-      })
-      .catch((err) => {
-        alert(err.message);
-      });
-  };
-  const listImages = async () => {
-    await storage
-      .ref()
-      .child("images/")
-      .listAll()
-      .then((res) => {
-        res.items.forEach((item) => {
-          item.getDownloadURL().then((url) => {
-            setImgUrls((arr) => [...arr, url]);
-          });
-        });
-      })
-      .catch((err) => {
-        alert(err.message);
-      });
-  };
 
 
   return (
     <Layout title='home'>
       <div>
-        <h1>Załaduj zdjęcie</h1>
-        <progress value={progress} max="100" />
-        <br />
-        <label htmlFor="wytop">Wytop:</label>
-        <input type="text" name="wytop" onChange={wytopHandler} />
-        {<span>{wytop}</span>}
-        <br />
-        <label htmlFor="imgUpload1">Zdjęcie 1 i 2:</label>
-        <input type="file" multiple name="imgUpload1" onChange={handleChange} />
-        <br />
-        <button onClick={handleUpload}>upload to firebase</button>
-        <br />
-        {urls.map((url, i) => (
-          <div key={i}>{url}</div>
-        ))}
-        <br />
-        {urls.map((url, i) => (
-          <a href={url} target="_blank">
-            <img style={{ width: "500px" }} key={i} src={url} alt="" />
-          </a>
-        ))}
-        <button onClick={listItem}>List Item</button>
-        {data.map((val) => (
-          <h2>{val}</h2>
-        ))}
-        <button onClick={listImages}>List Images</button>
-        <br/>
-        {imgUrls.map((val) => (
-          <img style={{height: '200px', display: 'inline'}} src={val} alt="" />
-        ))}
+      <h1 className={classes.home__title}>
+        Aktualizacje
+      </h1>
+      <i className={classes.data}>23.02.2022 r.</i>
+      <p className={classes.content}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis purus libero, fermentum ut massa sit amet, mattis vulputate neque. Duis in hendrerit arcu. In dapibus, tortor a viverra mattis, nisl neque luctus odio, quis placerat magna odio mollis dui. In sed maximus odio, sit amet feugiat arcu. Ut et erat a nibh pulvinar finibus ut non ex. Nulla vestibulum scelerisque mi eu faucibus. Phasellus quis neque vel eros auctor sagittis. Morbi venenatis vehicula sodales. Curabitur quis lobortis nibh, non facilisis quam. Fusce faucibus sit amet lectus finibus congue.
+
+Duis auctor hendrerit enim maximus venenatis. Praesent lacinia sollicitudin auctor. Proin fermentum pellentesque elementum. Curabitur rhoncus feugiat urna quis lobortis. Praesent semper dignissim ornare. Maecenas pretium mollis efficitur. Donec ac hendrerit sapien. Pellentesque tempus tincidunt pharetra.
+
+Etiam placerat posuere tempor. Suspendisse et molestie orci. Donec cursus, velit at auctor hendrerit, dui erat rhoncus eros, id aliquam augue turpis et nisl. Nunc a eleifend quam. Vestibulum a est dapibus, congue leo sed, euismod dolor. Donec vel ipsum pharetra, pretium odio nec, volutpat turpis. Proin tristique tempus nulla sit amet pellentesque. Praesent at fringilla libero, quis tristique lorem. Sed blandit a ipsum vitae condimentum. Aenean ultricies purus eu diam congue rhoncus sit amet at nibh. Fusce nulla mi, gravida efficitur est ut, lobortis elementum ex. Nunc eu dapibus neque. Proin euismod nisi quis lectus laoreet, eu malesuada felis pretium. Sed posuere enim et fringilla cursus.
+
+Phasellus vel erat eu purus elementum rhoncus. Suspendisse porttitor nulla nec eros condimentum porttitor. Proin scelerisque augue sed laoreet congue. Vivamus consectetur elementum urna a gravida. Nunc sed ligula eros. In consequat libero a augue vulputate accumsan. Duis quam arcu, gravida in volutpat et, sollicitudin vitae elit.
+
+Donec a convallis magna, et luctus mauris. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec tincidunt interdum libero, et aliquet magna vestibulum sed. Cras vehicula ex id tellus placerat luctus. Vivamus turpis quam, imperdiet sed est eu, convallis vulputate felis. Sed ut diam nec dolor mattis porttitor. Nulla id dolor id mi convallis fermentum. In a urna ultricies, consectetur ipsum sit amet, lobortis erat. Duis sollicitudin lorem nec lacus bibendum, ac mollis nunc pellentesque. Vestibulum et consequat leo. Donec vestibulum consectetur volutpat. Donec fringilla quam varius aliquet suscipit.</p>
       </div>
     </Layout>
   );

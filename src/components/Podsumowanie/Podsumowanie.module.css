@@ -12,13 +12,31 @@
     padding-bottom: 0.75rem;
     text-align: center;
   }
-
+  h2 {
+    font-size: 1.5rem;
+    border-bottom: 1px solid #51c4d3;
+    padding-bottom: 0.75rem;
+    text-align: center;
+  }
+.podsTable {
+  margin-top: 1rem;
+}
 
 .search {
     min-width: 100%;
     width: 100%;
     background-color: #126E82;
     border: 1px solid #132C33;
+}
+.generate {
+  min-width: 100%;
+  width: 100%;
+  background-color: #126E82;
+  border: 1px solid #132C33;
+}
+
+.generate:focus, .search:focus {
+  background-color: #132C33;
 }
 
 .imgCont{
@@ -28,24 +46,22 @@
 .middle {
   transition: .5s ease;
   opacity: 0;
-  position: absolute;
-  bottom: 0%;
-  left: 0%;
   text-align: center;
 }
 
-.imgCont:hover .zdj {
-  opacity: 0.6;
+.imgCont:hover, .firstPhotoBig, .secondPhotoBig {
+  opacity: 0.85;
 }
 
 .imgCont:hover .middle {
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .text {
   background-color: #126E82;
   color: white;
   padding: 0.25rem;
+  text-decoration: none;
 }
 
 tr td {
@@ -62,3 +78,32 @@ tr td {
   transition: .5s ease;
   backface-visibility: hidden;
 }
+
+
+.firstPhotoBig, .secondPhotoBig {
+  width: 525px;
+  height: 525px;
+  opacity: 1;
+  margin: 0 auto;
+  display: block;
+  border: 1px solid #126E82;
+  transition: .5s ease;
+  backface-visibility: hidden;
+}
+
+@media only screen and (min-width: 1200px) {
+  .firstCol {
+    border-right: 1px solid #51c4d3;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .firstPhotoBig, .secondPhotoBig {
+    width: 100%;
+    height: 100%;
+  }
+  .generate {
+    margin-top: 1rem;
+  }
+}
+

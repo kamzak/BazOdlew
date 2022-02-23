@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Form, Button, Col, Row, FormControl, Table } from "react-bootstrap";
 import { storage, database } from "../../firebase/firebase";
 import { ref, set, remove } from "firebase/database";
@@ -89,7 +89,7 @@ const Struktura = () => {
     }).then(
       images.map((image) => {
         const uploadTask = storage
-          .ref(`/images/${nrWytRef.current.value}_${count}`)
+          .ref(`/images/${nrWytRef.current.value}_${count}.jpeg`)
           .put(image);
         promises.push(uploadTask);
         uploadTask.on(

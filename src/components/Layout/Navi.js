@@ -4,11 +4,6 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import classes from "./Navi.module.css";
 
 const Navi = (props) => {
-  let toggleClass = {
-    backgroundColor: "#126E82",
-    color: "white",
-    padding: "0.5rem",
-  };
   let homeClass = { backgroundColor: "", color: "white", padding: "0.5rem" };
   let analizaClass = { backgroundColor: "", color: "white", padding: "0.5rem" };
   let strukturaClass = {

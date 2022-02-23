@@ -1,9 +1,9 @@
 import classes from "./Podsumowanie.module.css";
 import React, { useRef, useState } from "react";
-import { FormControl, Form, Button, Col, Row, Table } from "react-bootstrap";
+import { FormControl, Form, Button, Col, Row, Table, Container } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { storage, database } from "../../firebase/firebase";
-import { ref, set, remove } from "firebase/database";
+import html2pdf from "html2pdf.js";
 
 const Podsumowanie = () => {
   const [analizaData, setAnalizaData] = useState([]);
@@ -13,6 +13,7 @@ const Podsumowanie = () => {
   const [imgUrls, setImgUrls] = useState([]);
 
   const szukajRef = useRef();
+  const podsumowanieRef = useRef();
 
   const fetchImages = async () => {
     await storage
@@ -112,13 +113,27 @@ const Podsumowanie = () => {
     setShowTable(true);
   };
 
+  const generatePDF = () => {
+    const print = podsumowanieRef.current;
+    const opt = {
+      margin: 0,
+      filename: "Raport_" + szukajRef.current.value,
+      image: { type: "jpeg", quality: 1 },
+      html2canvas: { scale: 1, dpi: 300, letterRendering: true, useCORS: true },
+      jsPDF: { unit: "in", format: "a4", orientation: "landscape" },
+    };
+
+    // New Promise-based usage:
+    html2pdf().set(opt).from(print).save();
+  };
+
   return (
-    <Layout title='podsumowanie'>
+    <Layout title="podsumowanie">
       <h1 className={classes.pods__title}>Podsumowanie wyników</h1>
       <Form>
         <Row>
           <Form.Label htmlFor="nrwytopu">Nr wytopu:</Form.Label>
-          <Col xl={3}>
+          <Col xs={6} sm={4} xl={3}>
             <FormControl
               id="nrwytopu"
               type="text"
@@ -126,24 +141,26 @@ const Podsumowanie = () => {
               ref={szukajRef}
             />
           </Col>
-          <Col xl={2}>
+          <Col xs={6} sm={4} xl={2}>
             <Button onClick={searchData} className={classes.search}>
               Szukaj
+            </Button>
+          </Col>
+          <Col className="offset-xl-4" sm={4} xl={3}>
+            <Button onClick={generatePDF} className={classes.generate}>
+              Generuj PDF
             </Button>
           </Col>
         </Row>
       </Form>
       {showTable && (
-        <React.Fragment>
+        <div ref={podsumowanieRef}>
           {analizaData.length > 0 && (
             <React.Fragment>
               <div className="table-responsive">
                 <h1 className={classes.main__title}>Analiza chemiczna</h1>
                 <Table
-                  className={classes.dataTable}
                   className="mt-3"
-                  striped
-                  borderless
                   variant="light"
                 >
                   <thead className="tbHead text-center">
@@ -151,18 +168,18 @@ const Podsumowanie = () => {
                       <th style={{ width: "5%" }}>Nr wytopu</th>
                       <th style={{ width: "10%" }}>Gatunek</th>
                       <th style={{ width: "10%" }}>Rodzaj metalu</th>
-                      <th>C</th>
-                      <th>Si</th>
-                      <th>Mn</th>
-                      <th>Mg</th>
-                      <th>P</th>
-                      <th>S</th>
-                      <th>Cu</th>
-                      <th>Ce</th>
-                      <th>La</th>
-                      <th>Zr</th>
-                      <th>Bi</th>
-                      <th>Ca</th>
+                      <th style={{ width: "6.25%" }}>C</th>
+                      <th style={{ width: "6.25%" }}>Si</th>
+                      <th style={{ width: "6.25%" }}>Mn</th>
+                      <th style={{ width: "6.25%" }}>Mg</th>
+                      <th style={{ width: "6.25%" }}>P</th>
+                      <th style={{ width: "6.25%" }}>S</th>
+                      <th style={{ width: "6.25%" }}>Cu</th>
+                      <th style={{ width: "6.25%" }}>Ce</th>
+                      <th style={{ width: "6.25%" }}>La</th>
+                      <th style={{ width: "6.25%" }}>Zr</th>
+                      <th style={{ width: "6.25%" }}>Bi</th>
+                      <th style={{ width: "6.25%" }}>Ca</th>
                     </tr>
                   </thead>
                   <tbody className="text-center">
@@ -194,163 +211,180 @@ const Podsumowanie = () => {
               </div>
             </React.Fragment>
           )}
-          {strukturaData.length > 0 && (
-            <React.Fragment>
-              <div className="table-responsive">
-              <h1 className={classes.main__title}>Struktura</h1>
-              <Table
-                className={classes.dataTable}
-                className="mt-3"
-                striped
-                borderless
-                variant="light"
-              >
-                <thead className="tbHead text-center">
-                  <tr className="align-items-center">
-                    <th style={{ width: "5%" }}>Nr wytopu</th>
-                    <th style={{ width: "10%" }}>Gatunek</th>
-                    <th style={{ width: "10%" }}>Rodzaj metalu</th>
-                    <th>
-                      Liczba wydzieleń grafitu [1/mm<sup>2</sup>]
-                    </th>
-                    <th>Stopień sferoidalności grafitu [%]</th>
-                    <th>Udział grafitu [%]</th>
-                    <th>Udział perlitu [%]</th>
-                    <th>Udział ferrytu [%]</th>
-                    <th style={{ width: "12.5%" }}>Zdjęcie przed trawieniem</th>
-                    <th style={{ width: "12.5%" }}>Zdjęcie po trawieniu</th>
-                  </tr>
-                </thead>
-                <tbody className="text-center">
-                  {strukturaData.map((item, i) => {
-                    if (item.nrWyt === szukajRef.current.value) {
-                      return (
-                        <tr key={i} className="align-items-center">
-                          <td>{item.nrWyt}</td>
-                          <td>{item.gatunek}</td>
-                          <td>{item.rodzMet}</td>
-                          <td>{item.liczbWydz}</td>
-                          <td>{item.stpSfer}</td>
-                          <td>{item.udzGraf}</td>
-                          <td>{item.udzPerl}</td>
-                          <td>{item.udzFerr}</td>
-                          <td className={classes.imgCont}>
-                            {imgUrls.map((url, i) => {
-                              if (url.includes(`${item.nrWyt}_1`)) {
-                                return (
-                                  <a
-                                    key={i}
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    <img
-                                      key={i}
-                                      className={classes.zdj}
-                                      src={url}
-                                      alt=""
-                                    />
-                                    <div className={classes.middle}>
-                                      <div className={classes.text}>
-                                        Kliknij aby powiększyć
-                                      </div>
-                                    </div>
-                                  </a>
-                                );
-                              }
-                            })}
-                          </td>
-                          <td className={classes.imgCont}>
-                            {imgUrls.map((url, i) => {
-                              if (url.includes(`${item.nrWyt}_2`)) {
-                                return (
-                                  <a
-                                    key={i}
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    <img
-                                      key={i}
-                                      className={classes.zdj}
-                                      src={url}
-                                      alt=""
-                                    />
-                                    <div className={classes.middle}>
-                                      <div className={classes.text}>
-                                        Kliknij aby powiększyć
-                                      </div>
-                                    </div>
-                                  </a>
-                                );
-                              }
-                            })}
-                          </td>
-                        </tr>
-                      );
-                    }
-                  })}
-                </tbody>
-              </Table>
-              </div>
-            </React.Fragment>
-          )}
           {wlmechData.length > 0 && (
             <React.Fragment>
               <div className="table-responsive">
-              <h1 className={classes.main__title}>Właściwości mechaniczne</h1>
-              <Table
-                className={classes.dataTable}
-                className="mt-3"
-                striped
-                borderless
-                variant="light"
-              >
-                <thead className="tbHead text-center">
-                  <tr className="align-items-center">
-                    <th style={{ width: "5%" }}>Nr wytopu</th>
-                    <th style={{ width: "10%" }}>Gatunek</th>
-                    <th style={{ width: "10%" }}>Rodzaj metalu</th>
-                    <th>
-                      Wytrzymałość na rozciąganie R<sub>m</sub>[<i>MPa</i>]
-                    </th>
-                    <th>
-                      Granica plastyczności R<sub>p0,2</sub> [<i>MPa</i>]
-                    </th>
-                    <th>
-                      Wydłużenie względne A<sub>10</sub> [<i>%</i>]
-                    </th>
-                    <th>Twardość</th>
-                    <th>Udarność</th>
-                    <th>
-                      Moduł Younga E [<i>GPa</i>]
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="text-center">
-                  {wlmechData.map((item, i) => {
-                    if (item.nrWyt === szukajRef.current.value) {
-                      return (
-                        <tr key={i} className="align-items-center">
-                          <td>{item.nrWyt}</td>
-                          <td>{item.gatunek}</td>
-                          <td>{item.rodzMet}</td>
-                          <td>{item.rm}</td>
-                          <td>{item.granica}</td>
-                          <td>{item.wydluzenie}</td>
-                          <td>{item.twardosc}</td>
-                          <td>{item.udarnosc}</td>
-                          <td>{item.young}</td>
-                        </tr>
-                      );
-                    }
-                  })}
-                </tbody>
-              </Table>
+                <h1 className={classes.main__title}>Właściwości mechaniczne</h1>
+                <Table
+                  className="mt-3"
+                  variant="light"
+                >
+                  <thead className="tbHead text-center">
+                    <tr className="align-items-center">
+                      <th style={{ width: "5%" }}>Nr wytopu</th>
+                      <th style={{ width: "10%" }}>Gatunek</th>
+                      <th style={{ width: "10%" }}>Rodzaj metalu</th>
+                      <th>
+                        Wytrzymałość na rozciąganie R<sub>m</sub>[<i>MPa</i>]
+                      </th>
+                      <th>
+                        Granica plastyczności R<sub>p0,2</sub> [<i>MPa</i>]
+                      </th>
+                      <th>
+                        Wydłużenie względne A<sub>10</sub> [<i>%</i>]
+                      </th>
+                      <th>Twardość</th>
+                      <th>Udarność</th>
+                      <th>
+                        Moduł Younga E [<i>GPa</i>]
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-center">
+                    {wlmechData.map((item, i) => {
+                      if (item.nrWyt === szukajRef.current.value) {
+                        return (
+                          <tr key={i} className="align-items-center">
+                            <td>{item.nrWyt}</td>
+                            <td>{item.gatunek}</td>
+                            <td>{item.rodzMet}</td>
+                            <td>{item.rm}</td>
+                            <td>{item.granica}</td>
+                            <td>{item.wydluzenie}</td>
+                            <td>{item.twardosc}</td>
+                            <td>{item.udarnosc}</td>
+                            <td>{item.young}</td>
+                          </tr>
+                        );
+                      }
+                    })}
+                  </tbody>
+                </Table>
               </div>
             </React.Fragment>
           )}
-        </React.Fragment>
+          {strukturaData.length > 0 && (
+            <React.Fragment>
+              <div className="table-responsive html2pdf__page-break">
+                <h1 className={classes.main__title}>Struktura</h1>
+                <Table
+                  className="mt-3"
+                  variant="light"
+                >
+                  <thead className="tbHead text-center">
+                    <tr className="align-items-center">
+                      <th style={{ width: "5%" }}>Nr wytopu</th>
+                      <th style={{ width: "10%" }}>Gatunek</th>
+                      <th style={{ width: "10%" }}>Rodzaj metalu</th>
+                      <th>
+                        Liczba wydzieleń grafitu [<i>1/mm<sup>2</sup></i>]
+                      </th>
+                      <th>Stopień sferoidalności grafitu [<i>%</i>]</th>
+                      <th>Udział grafitu [<i>%</i>]</th>
+                      <th>Udział perlitu [<i>%</i>]</th>
+                      <th>Udział ferrytu [<i>%</i>]</th>
+                      </tr>
+                  </thead>
+                  <tbody className="text-center">
+                    {strukturaData.map((item, i) => {
+                      if (item.nrWyt === szukajRef.current.value) {
+                        return (
+                          <tr key={i} className="align-items-center">
+                            <td>{item.nrWyt}</td>
+                            <td>{item.gatunek}</td>
+                            <td>{item.rodzMet}</td>
+                            <td>{item.liczbWydz}</td>
+                            <td>{item.stpSfer}</td>
+                            <td>{item.udzGraf}</td>
+                            <td>{item.udzPerl}</td>
+                            <td>{item.udzFerr}</td> 
+                          </tr>
+                        );
+                      }
+                    })}
+                  </tbody>
+                </Table>
+              </div>
+            </React.Fragment>
+          )}
+          
+          {strukturaData.length > 0 && <Container className={classes.podsTable}>
+            <Row className="align-items-center">
+              <Col xs={12} sm={12} xl={6} className={classes.firstCol}>
+                <h2>Zdjęcie przed trawieniem</h2>
+                {strukturaData.map((item, i) => {
+                  if (item.nrWyt === szukajRef.current.value) {
+                    return (
+                      <div className={classes.imgCont}>
+                        {imgUrls.map((url, i) => {
+                          if (url.includes(`${item.nrWyt}_1`)) {
+                            return (
+                              <a
+                              key={i}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ textDecoration: 'none'}}
+                            >
+                              <img
+                                key={i}
+                                className={classes.firstPhotoBig}
+                                src={url}
+                                alt=""
+                              />
+                              <div className={classes.middle}>
+                                <div className={classes.text}>
+                                  <span>Kliknij aby powiększyć</span>
+                                </div>
+                              </div>
+                            </a>
+                            );
+                          }
+                        })}
+                      </div>
+                    );
+                  }
+                })}
+              </Col>
+              <Col xs={12} sm={12} xl={6}>
+                <h2>Zdjęcie po trawieniu</h2>
+                {strukturaData.map((item, i) => {
+                  if (item.nrWyt === szukajRef.current.value) {
+                    return (
+                      <div className={classes.imgCont}>
+                        {imgUrls.map((url, i) => {
+                          if (url.includes(`${item.nrWyt}_2`)) {
+                            return (
+                              <a
+                              key={i}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ textDecoration: 'none'}}
+                            >
+                              <img
+                                key={i}
+                                className={classes.secondPhotoBig}
+                                src={url}
+                                alt=""
+                              />
+                              <div className={classes.middle}>
+                                <div className={classes.text}>
+                                  <span>Kliknij aby powiększyć</span>
+                                </div>
+                              </div>
+                            </a>
+                            );
+                          }
+                        })}
+                      </div>
+                    );
+                  }
+                })}
+              </Col>
+            </Row>
+          </Container>}
+        </div>
       )}
     </Layout>
   );

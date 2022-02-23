@@ -1,0 +1,19 @@
+.home__title {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #51c4d3;
+    padding-bottom: 0.75rem;
+  }
+
+
+  .data {
+      color: gray;
+      text-align: right;
+      display: flex;
+      justify-content: end;
+      margin-bottom: 1rem;
+  }
+
+  .content {
+      text-align: justify;
+  }
