@@ -315,7 +315,7 @@ const Podsumowanie = () => {
                 {strukturaData.map((item, i) => {
                   if (item.nrWyt === szukajRef.current.value) {
                     return (
-                      <div className={classes.imgCont}>
+                      <div key={i} className={classes.imgCont}>
                         {imgUrls.map((url, i) => {
                           if (url.includes(`${item.nrWyt}_1`)) {
                             return (
@@ -351,7 +351,7 @@ const Podsumowanie = () => {
                 {strukturaData.map((item, i) => {
                   if (item.nrWyt === szukajRef.current.value) {
                     return (
-                      <div className={classes.imgCont}>
+                      <div key={i} className={classes.imgCont}>
                         {imgUrls.map((url, i) => {
                           if (url.includes(`${item.nrWyt}_2`)) {
                             return (
