@@ -327,7 +327,6 @@ const Podsumowanie = () => {
                               style={{ textDecoration: 'none'}}
                             >
                               <img
-                                key={i}
                                 className={classes.firstPhotoBig}
                                 src={url}
                                 alt=""
@@ -363,7 +362,6 @@ const Podsumowanie = () => {
                               style={{ textDecoration: 'none'}}
                             >
                               <img
-                                key={i}
                                 className={classes.secondPhotoBig}
                                 src={url}
                                 alt=""
