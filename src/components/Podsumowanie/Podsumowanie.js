@@ -1,9 +1,18 @@
 import classes from "./Podsumowanie.module.css";
-import React, { useRef, useState } from "react";
-import { FormControl, Form, Button, Col, Row, Table, Container } from "react-bootstrap";
+import React, { useRef, useState, useContext } from "react";
+import {
+  FormControl,
+  Form,
+  Button,
+  Col,
+  Row,
+  Table,
+  Container,
+} from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { storage, database } from "../../firebase/firebase";
 import html2pdf from "html2pdf.js";
+import AuthContext from "../../store/auth-context";
 
 const Podsumowanie = () => {
   const [analizaData, setAnalizaData] = useState([]);
@@ -14,6 +23,9 @@ const Podsumowanie = () => {
 
   const szukajRef = useRef();
   const podsumowanieRef = useRef();
+
+  // use Context to retrieve auth token
+  const authCtx = useContext(AuthContext);
 
   const fetchImages = async () => {
     await storage
@@ -35,15 +47,16 @@ const Podsumowanie = () => {
 
   const searchData = async (event) => {
     event.preventDefault();
+    const token = authCtx.token;
 
     const responseAnaliza = await fetch(
-      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/analiza.json"
+      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/analiza.json?auth="+token
     );
     const responseStruktura = await fetch(
-      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/struktura.json"
+      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/struktura.json?auth="+token
     );
     const responseWlmech = await fetch(
-      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/wlmech.json"
+      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/wlmech.json?auth="+token
     );
 
     const dataAnaliza = await responseAnaliza.json();
@@ -159,10 +172,7 @@ const Podsumowanie = () => {
             <React.Fragment>
               <div className="table-responsive">
                 <h1 className={classes.main__title}>Analiza chemiczna</h1>
-                <Table
-                  className="mt-3"
-                  variant="light"
-                >
+                <Table className="mt-3" variant="light">
                   <thead className="tbHead text-center">
                     <tr className="align-items-center">
                       <th style={{ width: "5%" }}>Nr wytopu</th>
@@ -215,10 +225,7 @@ const Podsumowanie = () => {
             <React.Fragment>
               <div className="table-responsive">
                 <h1 className={classes.main__title}>Właściwości mechaniczne</h1>
-                <Table
-                  className="mt-3"
-                  variant="light"
-                >
+                <Table className="mt-3" variant="light">
                   <thead className="tbHead text-center">
                     <tr className="align-items-center">
                       <th style={{ width: "5%" }}>Nr wytopu</th>
@@ -267,23 +274,32 @@ const Podsumowanie = () => {
             <React.Fragment>
               <div className="table-responsive html2pdf__page-break">
                 <h1 className={classes.main__title}>Struktura</h1>
-                <Table
-                  className="mt-3"
-                  variant="light"
-                >
+                <Table className="mt-3" variant="light">
                   <thead className="tbHead text-center">
                     <tr className="align-items-center">
                       <th style={{ width: "5%" }}>Nr wytopu</th>
                       <th style={{ width: "10%" }}>Gatunek</th>
                       <th style={{ width: "10%" }}>Rodzaj metalu</th>
                       <th>
-                        Liczba wydzieleń grafitu [<i>1/mm<sup>2</sup></i>]
+                        Liczba wydzieleń grafitu [
+                        <i>
+                          1/mm<sup>2</sup>
+                        </i>
+                        ]
                       </th>
-                      <th>Stopień sferoidalności grafitu [<i>%</i>]</th>
-                      <th>Udział grafitu [<i>%</i>]</th>
-                      <th>Udział perlitu [<i>%</i>]</th>
-                      <th>Udział ferrytu [<i>%</i>]</th>
-                      </tr>
+                      <th>
+                        Stopień sferoidalności grafitu [<i>%</i>]
+                      </th>
+                      <th>
+                        Udział grafitu [<i>%</i>]
+                      </th>
+                      <th>
+                        Udział perlitu [<i>%</i>]
+                      </th>
+                      <th>
+                        Udział ferrytu [<i>%</i>]
+                      </th>
+                    </tr>
                   </thead>
                   <tbody className="text-center">
                     {strukturaData.map((item, i) => {
@@ -297,7 +313,7 @@ const Podsumowanie = () => {
                             <td>{item.stpSfer}</td>
                             <td>{item.udzGraf}</td>
                             <td>{item.udzPerl}</td>
-                            <td>{item.udzFerr}</td> 
+                            <td>{item.udzFerr}</td>
                           </tr>
                         );
                       }
@@ -307,81 +323,89 @@ const Podsumowanie = () => {
               </div>
             </React.Fragment>
           )}
-          
-          {strukturaData.length > 0 && <Container className={classes.podsTable}>
-            <Row className="align-items-center">
-              <Col xs={12} sm={12} xl={6} className={classes.firstCol}>
-                <h2>Zdjęcie przed trawieniem</h2>
-                {strukturaData.map((item, i) => {
-                  if (item.nrWyt === szukajRef.current.value) {
-                    return (
-                      <div key={i} className={classes.imgCont}>
-                        {imgUrls.map((url, i) => {
-                          if (url.includes(`${item.nrWyt}_1`)) {
-                            return (
-                              <a
-                              key={i}
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ textDecoration: 'none'}}
-                            >
-                              <img
-                                className={classes.firstPhotoBig}
-                                src={url}
-                                alt=""
-                              />
-                              <div className={classes.middle}>
-                                <div className={classes.text}>
-                                  <span>Kliknij aby powiększyć</span>
-                                </div>
-                              </div>
-                            </a>
-                            );
-                          }
-                        })}
-                      </div>
-                    );
-                  }
-                })}
-              </Col>
-              <Col xs={12} sm={12} xl={6}>
-                <h2>Zdjęcie po trawieniu</h2>
-                {strukturaData.map((item, i) => {
-                  if (item.nrWyt === szukajRef.current.value) {
-                    return (
-                      <div key={i} className={classes.imgCont}>
-                        {imgUrls.map((url, i) => {
-                          if (url.includes(`${item.nrWyt}_2`)) {
-                            return (
-                              <a
-                              key={i}
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ textDecoration: 'none'}}
-                            >
-                              <img
-                                className={classes.secondPhotoBig}
-                                src={url}
-                                alt=""
-                              />
-                              <div className={classes.middle}>
-                                <div className={classes.text}>
-                                  <span>Kliknij aby powiększyć</span>
-                                </div>
-                              </div>
-                            </a>
-                            );
-                          }
-                        })}
-                      </div>
-                    );
-                  }
-                })}
-              </Col>
-            </Row>
-          </Container>}
+
+          {strukturaData.length > 0 && (
+            <Container className={classes.podsTable}>
+              <Row className="align-items-center">
+                <Col xs={12} sm={12} xl={6} className={classes.firstCol}>
+                  <h2>Zdjęcie przed trawieniem</h2>
+                  {strukturaData.map((item, i) => {
+                    if (item.nrWyt === szukajRef.current.value) {
+                      return (
+                        <div key={i} className={classes.imgCont}>
+                          {imgUrls.map((url, i) => {
+                            let url1 = url.split('2F');
+                            let url2 = url1[1].split('?alt');
+                            let url3 = url2[0];
+                            if(url3 === (`${item.nrWyt}_1`) || url3 === (`${item.nrWyt}_1.jpeg`)) {
+                              return (
+                                <a
+                                  key={i}
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: "none" }}
+                                >
+                                  <img
+                                    className={classes.firstPhotoBig}
+                                    src={url}
+                                    alt=""
+                                  />
+                                  <div className={classes.middle}>
+                                    <div className={classes.text}>
+                                      <span>Kliknij aby powiększyć</span>
+                                    </div>
+                                  </div>
+                                </a>
+                              );
+                            }
+                          })}
+                        </div>
+                      );
+                    }
+                  })}
+                </Col>
+                <Col xs={12} sm={12} xl={6}>
+                  <h2>Zdjęcie po trawieniu</h2>
+                  {strukturaData.map((item, i) => {
+                    if (item.nrWyt === szukajRef.current.value) {
+                      return (
+                        <div key={i} className={classes.imgCont}>
+                          {imgUrls.map((url, i) => {
+                            let url1 = url.split('2F');
+                            let url2 = url1[1].split('?alt');
+                            let url3 = url2[0];
+                            if(url3 === (`${item.nrWyt}_2`) || url3 === (`${item.nrWyt}_2.jpeg`)) {
+                              return (
+                                <a
+                                  key={i}
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: "none" }}
+                                >
+                                  <img
+                                    className={classes.secondPhotoBig}
+                                    src={url}
+                                    alt=""
+                                  />
+                                  <div className={classes.middle}>
+                                    <div className={classes.text}>
+                                      <span>Kliknij aby powiększyć</span>
+                                    </div>
+                                  </div>
+                                </a>
+                              );
+                            }
+                          })}
+                        </div>
+                      );
+                    }
+                  })}
+                </Col>
+              </Row>
+            </Container>
+          )}
         </div>
       )}
     </Layout>

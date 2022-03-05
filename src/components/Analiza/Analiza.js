@@ -1,5 +1,5 @@
 import classes from "./Analiza.module.css";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 import { Form, Button, Col, Row, FormControl, Table } from "react-bootstrap";
 import { database } from "../../firebase/firebase";
 import { ref, set, remove } from "firebase/database";
@@ -7,6 +7,7 @@ import { ref, set, remove } from "firebase/database";
 import Layout from "../Layout/Layout";
 import Modal from "../UI/Modal";
 import Pagination from "../Layout/Pagination";
+import AuthContext from "../../store/auth-context";
 
 const Analiza = () => {
   // Manage data states
@@ -14,9 +15,27 @@ const Analiza = () => {
   const [datas, setDatas] = useState([]);
   const [btnTableText, setBtnTableText] = useState(false);
   const [showText, setShowText] = useState("Pokaż wyniki");
-  const [formIsValid, setFormIsValid] = useState(false);
   const [showAddAlert, setAddShowAlert] = useState(false);
   const [showRemoveAlert, setRemoveShowAlert] = useState(false);
+
+  // Manage input states
+  const [wyt, setWyt] = useState("");
+  const [wytTouched, setWytTouched] = useState(false);
+  const [wytExist, setWytExist] = useState("");
+
+  let errorText = '| Numer wytopu jest niepoprawny! |';
+
+  const wytValid = wyt.trim() !== "" && wytExist === "";
+  const wytInvalid = !wytValid && wytTouched;
+
+  let formIsValid = false;
+
+  if (!wytInvalid) {
+    formIsValid = true;
+  }
+
+  // use Context to retrieve auth token
+  const authCtx = useContext(AuthContext);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,8 +70,10 @@ const Analiza = () => {
   // On submit form func
   const sendData = async (event) => {
     event.preventDefault();
-    if (nrWytRef.current.value === "") {
-      formIsValid(false);
+
+    setWytTouched(true);
+
+    if (!wytValid) {
       return;
     }
     const promises = [];
@@ -100,8 +121,10 @@ const Analiza = () => {
 
   // Fetching data from database
   async function fetchData() {
+    const token = authCtx.token;
     const response = await fetch(
-      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/analiza.json"
+      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/analiza.json?auth=" +
+        token
     );
     const data = await response.json();
     const baseItems = [];
@@ -127,6 +150,41 @@ const Analiza = () => {
     }
     setDatas(baseItems);
   }
+  // Fetching data once
+  useEffect(() => {
+    fetchData();
+  }, []);
+  let itemNr = '';
+  // Input handlers
+  const wytHandler = (event) => {
+    setWyt(event.target.value);
+    if(event.target.value === '' || event.target.value !== itemNr) {
+      setWytExist('');
+    }
+  };
+
+  const wytBlur = () => {
+    setWytTouched(true);
+    datas.map((item) => {
+      itemNr = item.nrWyt;
+      if (itemNr === wyt) {
+        let temp = ` | ${itemNr} już istnieje w bazie! |`;
+        setWytExist(temp);
+        console.log(wytExist);
+      }
+    });
+    
+    /*
+    currentRecords.map((item) => {
+      if (item.nrWyt === wyt) {
+        console.log(item.nrWyt + " " + wyt);
+        let temp = `${item.nrWyt} już istnieje w bazie!`;
+        setWytExist(temp);
+        console.log(wytExist);
+        return;
+      }
+    });*/
+  };
 
   // Listing all images and saving it to setImgUrls state
 
@@ -147,8 +205,10 @@ const Analiza = () => {
     setRemoveShowAlert(false);
   };
 
+  const wytClasses = wytInvalid ? classes.invalid : '';
+
   return (
-    <Layout title='analiza' className={classes.analiza}>
+    <Layout title="analiza" className={classes.analiza}>
       <h1 className={classes.analiza__title}>
         Formularz dodania wyników - analiza chemiczna
       </h1>
@@ -156,13 +216,26 @@ const Analiza = () => {
       <Form>
         <Row className="align-items-center">
           <Col xs={12} sm={4} xl={4} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">Nr wytopu</Form.Label>
+            <Form.Label htmlFor="inlineFormInputName" style={{width: '100%'}}>
+              Nr wytopu 
+              {wytInvalid && (
+                <span className={classes.error}>
+                  {(wytExist !== '') && wytExist}
+                  {(wytExist === '') && ` | Numer wytopu jest niepoprawny! |`}
+                </span>
+              )}
+            </Form.Label>
             <Form.Control
               ref={nrWytRef}
               id="inlineFormInputName"
               placeholder="Np. 2313"
               type="number"
               min="0"
+              value={wyt}
+              className={wytClasses}
+              onChange={wytHandler}
+              onBlur={wytBlur}
+              required
             />
           </Col>
           <Col xs={12} sm={4} xl={4} className="mb-3">
@@ -371,6 +444,7 @@ const Analiza = () => {
               onClick={sendData}
               className={classes.submitBtn}
               type="submit"
+              disabled={!formIsValid}
             >
               Dodaj wyniki
             </Button>
@@ -386,7 +460,6 @@ const Analiza = () => {
       <Row>
         <Col xs={12} sm={6} xl={2}>
           <Button
-            disabled={formIsValid}
             onClick={listImages}
             className={classes.showBtn}
             ref={showBtnRef}

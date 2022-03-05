@@ -16,10 +16,25 @@
     color: #D8E3E7 !important;
     border-radius: 0.25rem;
     text-align: center;
+    margin: 0 0.75rem;
 }
 
 .links:hover {
     color: #aadef0 !important;
+}
+
+.login {
+    background-color: #008CBA;
+    color: white !important;
+    width: 10rem;
+    border: 1px solid #008CBA;
+    outline: none;
+  transition: 0.5s ease-in-out;
+}
+.login:hover {
+    background-color: #01b5f1;
+    color: black !important;
+    border: 1px solid #74dcff;
 }
 
 @media (max-width: 992px){

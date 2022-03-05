@@ -2,8 +2,18 @@ import { Link } from "react-router-dom";
 import logo from "../static/logo.png";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import classes from "./Navi.module.css";
+import { useContext } from "react";
+import AuthContext from "../../store/auth-context";
 
 const Navi = (props) => {
+  const authCtx = useContext(AuthContext);
+
+  const isLoggedIn = authCtx.isLoggedIn;
+
+  const logoutHandler = () => {
+    authCtx.logout();
+  }
+
   let homeClass = { backgroundColor: "", color: "white", padding: "0.5rem" };
   let analizaClass = { backgroundColor: "", color: "white", padding: "0.5rem" };
   let strukturaClass = {
@@ -13,6 +23,11 @@ const Navi = (props) => {
   };
   let wlmechClass = { backgroundColor: "", color: "white", padding: "0.5rem" };
   let podsumowanieClass = {
+    backgroundColor: "",
+    color: "white",
+    padding: "0.5rem",
+  };
+  let loginClass = {
     backgroundColor: "",
     color: "white",
     padding: "0.5rem",
@@ -53,6 +68,13 @@ const Navi = (props) => {
       padding: "0.5rem",
     };
   }
+  if (props.title === "login") {
+    loginClass = {
+      backgroundColor: "#126E82",
+      color: "white",
+      padding: "0.5rem",
+    };
+  }
 
   return (
     <>
@@ -84,33 +106,33 @@ const Navi = (props) => {
               >
                 Strona główna
               </Nav.Link>
-              <Nav.Link
+              {isLoggedIn && (<Nav.Link
                 style={analizaClass}
                 className={classes.links}
                 as={Link}
                 to="/analiza"
               >
                 Analiza chemiczna
-              </Nav.Link>
-              <Nav.Link
+              </Nav.Link>)}
+              {isLoggedIn && (<Nav.Link
                 style={strukturaClass}
                 className={classes.links}
                 as={Link}
                 to="/struktura"
               >
                 Struktura
-              </Nav.Link>
-              <Nav.Link
+              </Nav.Link>)}
+              {isLoggedIn && (<Nav.Link
                 style={wlmechClass}
                 className={classes.links}
                 as={Link}
                 to="/wlmech"
               >
                 Właściwości mechaniczne
-              </Nav.Link>
+              </Nav.Link>)}
             </Nav>
             <Nav>
-              <Nav.Link
+            {isLoggedIn && (<Nav.Link
                 style={podsumowanieClass}
                 eventKey={2}
                 className={classes.links}
@@ -118,7 +140,24 @@ const Navi = (props) => {
                 to="/podsumowanie"
               >
                 Podsumowanie
-              </Nav.Link>
+              </Nav.Link>)}
+              {!isLoggedIn && (<Nav.Link
+                style={loginClass}
+                className={`${classes.links} ${classes.login}`}
+                as={Link}
+                to="/login"
+              >
+                Zaloguj się
+              </Nav.Link>)}
+              {isLoggedIn && (<Nav.Link
+                style={loginClass}
+                className={`${classes.links} ${classes.login}`}
+                as={Link}
+                to="/"
+                onClick={logoutHandler}
+              >
+                Wyloguj się
+              </Nav.Link>)}
             </Nav>
           </Navbar.Collapse>
         </Container>

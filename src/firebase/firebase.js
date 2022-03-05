@@ -2,6 +2,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
 import 'firebase/compat/database';
 import { getDatabase } from "firebase/database";
+import { getAuth } from 'firebase/auth';
 
 
 // Import the functions you need from the SDKs you need
@@ -25,9 +26,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage(app);
+const auth = getAuth(app);
 const database = getDatabase(app);
 
 export  {
-    storage, database, firebase as default
+    auth, storage, database, firebase as default
   }
  

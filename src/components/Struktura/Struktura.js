@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useContext } from "react";
 import { Form, Button, Col, Row, FormControl, Table } from "react-bootstrap";
 import { storage, database } from "../../firebase/firebase";
 import { ref, set, remove } from "firebase/database";
@@ -7,6 +7,7 @@ import Layout from "../Layout/Layout";
 import Modal from "../UI/Modal";
 import Pagination from "../Layout/Pagination";
 import classes from "./Struktura.module.css";
+import AuthContext from "../../store/auth-context";
 
 const Struktura = () => {
   // Manage data states
@@ -20,6 +21,9 @@ const Struktura = () => {
   const [formIsValid, setFormIsValid] = useState(false);
   const [showAddAlert, setAddShowAlert] = useState(false);
   const [showRemoveAlert, setRemoveShowAlert] = useState(false);
+
+  // use Context to retrieve auth token
+  const authCtx = useContext(AuthContext);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -130,8 +134,10 @@ const Struktura = () => {
 
   // Fetching data from database
   async function fetchData() {
+    const token = authCtx.token;
     const response = await fetch(
-      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/struktura.json"
+      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/struktura.json?auth=" +
+        token
     );
     const data = await response.json();
     const baseItems = [];
@@ -190,7 +196,7 @@ const Struktura = () => {
   };
 
   return (
-    <Layout title='struktura' className={classes.struktura}>
+    <Layout title="struktura" className={classes.struktura}>
       <h1 className={classes.struktura__title}>
         Formularz dodania wyników - struktura
       </h1>
@@ -302,19 +308,19 @@ const Struktura = () => {
               max="100"
             />
           </Col>
-            <Col xs={12} sm={6} xl={6} className="mb-3">
-              <Form.Label htmlFor="inlineFormInputGroupUsername">
-                Zdjęcie struktury przed trawieniem
-              </Form.Label>
-              <FormControl
-                id="inlineFormInputGroupUsername"
-                ref={img1Ref}
-                placeholder="Zdjęcie przed trawieniem"
-                type="file"
-                onChange={handleChange1}
-              />
-            </Col>
-            <Col xs={12} sm={6} xl={3} className="mb-3">
+          <Col xs={12} sm={6} xl={6} className="mb-3">
+            <Form.Label htmlFor="inlineFormInputGroupUsername">
+              Zdjęcie struktury przed trawieniem
+            </Form.Label>
+            <FormControl
+              id="inlineFormInputGroupUsername"
+              ref={img1Ref}
+              placeholder="Zdjęcie przed trawieniem"
+              type="file"
+              onChange={handleChange1}
+            />
+          </Col>
+          <Col xs={12} sm={6} xl={3} className="mb-3">
             <Form.Label htmlFor="inlineFormInputName">
               Udział ferrytu [%]
             </Form.Label>
@@ -327,21 +333,19 @@ const Struktura = () => {
               max="100"
             />
           </Col>
-            <Col xs={12} sm={6} xl={6} className="mb-3">
-              <Form.Label htmlFor="inlineFormInputGroupUsername">
-                Zdjęcie struktury po trawieniu
-              </Form.Label>
-              <FormControl
-                id="inlineFormInputGroupUsername"
-                ref={img2Ref}
-                placeholder="Zdjęcie po trawieniu"
-                type="file"
-                onChange={handleChange2}
-              />
-              <progress value={progress} max="100" />
-            </Col>
-            
-          
+          <Col xs={12} sm={6} xl={6} className="mb-3">
+            <Form.Label htmlFor="inlineFormInputGroupUsername">
+              Zdjęcie struktury po trawieniu
+            </Form.Label>
+            <FormControl
+              id="inlineFormInputGroupUsername"
+              ref={img2Ref}
+              placeholder="Zdjęcie po trawieniu"
+              type="file"
+              onChange={handleChange2}
+            />
+            <progress value={progress} max="100" />
+          </Col>
         </Row>
         <Row className="align-items-center">
           <Col xs={12} sm={12} xl={6} className="offset-xl-3">
@@ -413,7 +417,10 @@ const Struktura = () => {
                     <td>{item.udzFerr}</td>
                     <td className={classes.imgCont}>
                       {imgUrls.map((url, i) => {
-                        if (url.includes(`${item.nrWyt}_1`)) {
+                        let url1 = url.split('2F');
+                        let url2 = url1[1].split('?alt');
+                        let url3 = url2[0];
+                        if(url3 === (`${item.nrWyt}_1`) || url3 === (`${item.nrWyt}_1.jpeg`)) {
                           return (
                             <a
                               key={i}
@@ -439,7 +446,10 @@ const Struktura = () => {
                     </td>
                     <td className={classes.imgCont}>
                       {imgUrls.map((url, i) => {
-                        if (url.includes(`${item.nrWyt}_2`)) {
+                        let url1 = url.split('2F');
+                        let url2 = url1[1].split('?alt');
+                        let url3 = url2[0];
+                        if(url3 === (`${item.nrWyt}_2`) || url3 === (`${item.nrWyt}_2.jpeg`)) {
                           return (
                             <a
                               key={i}

@@ -1,5 +1,5 @@
 import classes from "./Wlmech.module.css";
-import { useRef, useState } from "react";
+import { useRef, useState, useContext } from "react";
 import { Form, Button, Col, Row, FormControl, Table } from "react-bootstrap";
 import { database } from "../../firebase/firebase";
 import { ref, set, remove } from "firebase/database";
@@ -7,6 +7,7 @@ import { ref, set, remove } from "firebase/database";
 import Layout from "../Layout/Layout";
 import Modal from "../UI/Modal";
 import Pagination from "../Layout/Pagination";
+import AuthContext from "../../store/auth-context";
 
 const Wlmech = () => {
   // Manage data states
@@ -17,6 +18,9 @@ const Wlmech = () => {
   const [formIsValid, setFormIsValid] = useState(false);
   const [showAddAlert, setAddShowAlert] = useState(false);
   const [showRemoveAlert, setRemoveShowAlert] = useState(false);
+
+  // use Context to retrieve auth token
+  const authCtx = useContext(AuthContext);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,8 +88,9 @@ const Wlmech = () => {
 
   // Fetching data from database
   async function fetchData() {
+    const token = authCtx.token;
     const response = await fetch(
-      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/wlmech.json"
+      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/wlmech.json?auth="+token
     );
     const data = await response.json();
     const baseItems = [];
@@ -291,7 +296,7 @@ const Wlmech = () => {
           </Col>
         </Row>
         <Row className="align-items-center">
-          <Col xs={12} sm={12} xl={6} className="offset-md-3">
+          <Col xs={12} sm={12} xl={6} className="offset-xl-3">
             <Button
               onClick={sendData}
               className={classes.submitBtn}
