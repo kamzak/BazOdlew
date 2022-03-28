@@ -1,0 +1,89 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 20;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.modal {
+  position: fixed;
+  top: 5vh;
+  background-color: #d4e8edb4;
+  padding: 1rem;
+  border-color: #c3e6cb;
+  text-align: center;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 30;
+  transition: 0.5s;
+  animation: slide-down 300ms ease-out forwards;
+}
+
+.modal img {
+  transition: 0.5s;
+  width: 68rem;
+  border-radius: 14px;
+}
+
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0 0.86rem;
+  cursor: pointer;
+  color:rgba(0, 0, 0, 0.75);
+  font-size: 2rem;
+}
+
+.close:hover {
+  background-color: rgba(10, 33, 42, 0.671);
+  color: white;
+}
+
+@media (min-width: 1200px) {
+  .modal {
+    width: 70rem;
+    left: calc(50% - 35rem);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+  .modal {
+    width: 45rem;
+    left: calc(50% - 22.5rem);
+  }
+
+  .modal img {
+    width: 43rem;
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    top: 25vh;
+    width: 25rem;
+    left: calc(50% - 12.5rem);
+  }
+
+  .modal img {
+    width: 23rem;
+    border-radius: 14px;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-3rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

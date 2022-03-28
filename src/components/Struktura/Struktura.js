@@ -11,12 +11,13 @@ import AuthContext from "../../store/auth-context";
 import useInput from "../../hooks/use-input";
 import errorIcon from "../static/error-icon.png";
 import warningIcon from "../static/warning-icon.png";
+import ImgModal from "../UI/ImgModal";
 
 const Struktura = () => {
   // Manage data states
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
-  const [progress, setProgress] = useState(0.00);
+  const [progress, setProgress] = useState(0.0);
   const [imgUrls, setImgUrls] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [datas, setDatas] = useState([]);
@@ -24,6 +25,8 @@ const Struktura = () => {
   const [showText, setShowText] = useState("Pokaż wyniki");
   const [showAddAlert, setAddShowAlert] = useState(false);
   const [showRemoveAlert, setRemoveShowAlert] = useState(false);
+  const [showImgModal, setShowImgModal] = useState(false);
+  const [modalImgUrl, setModalImgUrl] = useState('');
 
   const [mounted, setMounted] = useState(false);
 
@@ -367,6 +370,10 @@ const Struktura = () => {
       });
   };
 
+  const imgModalHandler = () => {
+    setShowImgModal((prevState) => !prevState);
+  };
+
   const listImages = async () => {
     if (btnTableText) {
       setShowText("Pokaż wyniki");
@@ -424,19 +431,17 @@ const Struktura = () => {
                 if (count === 0) {
                   count++;
                   return (
-                    <a
-                      key={i}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <div key={i} onClick={() => {
+                      imgModalHandler();
+                      setModalImgUrl(url);
+                    }}>
                       <img key={i} className={classes.zdj} src={url} alt="" />
                       <div className={classes.middle}>
                         <div className={classes.text}>
                           Kliknij aby powiększyć
                         </div>
                       </div>
-                    </a>
+                    </div>
                   );
                 }
               }
@@ -455,19 +460,17 @@ const Struktura = () => {
                 if (count === 0) {
                   count++;
                   return (
-                    <a
-                      key={i}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <div key={i} onClick={() => {
+                      imgModalHandler();
+                      setModalImgUrl(url);
+                    }}>
                       <img key={i} className={classes.zdj} src={url} alt="" />
                       <div className={classes.middle}>
                         <div className={classes.text}>
                           Kliknij aby powiększyć
                         </div>
                       </div>
-                    </a>
+                    </div>
                   );
                 }
               }
@@ -854,6 +857,12 @@ const Struktura = () => {
             <tbody className="text-center">{renderTable()}</tbody>
           </Table>
         </div>
+      )}
+      {showImgModal && (
+        <ImgModal
+          src={modalImgUrl}
+          onClose={imgModalHandler}
+        ></ImgModal>
       )}
       {showRemoveAlert && (
         <Modal onClose={closeAlertHandler}>Usunięto rekord z bazy!</Modal>
