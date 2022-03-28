@@ -8,15 +8,14 @@
     text-align: center;
 }
 .home:hover {
-    background-color: #51C4D3;
-    color: #132C33 !important;
+    color: #aadef0 !important;
 }
 
 .links {
     color: #D8E3E7 !important;
     border-radius: 0.25rem;
     text-align: center;
-    margin: 0 0.75rem;
+    margin: 0.25rem 0;
 }
 
 .links:hover {
@@ -26,10 +25,9 @@
 .login {
     background-color: #008CBA;
     color: white !important;
-    width: 10rem;
     border: 1px solid #008CBA;
     outline: none;
-  transition: 0.5s ease-in-out;
+    transition: 0.5s ease-in-out;
 }
 .login:hover {
     background-color: #01b5f1;
@@ -40,5 +38,14 @@
 @media (max-width: 992px){
     .home {
         margin-top: 1rem !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .login {
+        width: 10rem;
+    }
+    .links {
+        margin: 0 0.75rem;
     }
 }

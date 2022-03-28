@@ -131,7 +131,7 @@ const Navi = (props) => {
                 Właściwości mechaniczne
               </Nav.Link>)}
             </Nav>
-            <Nav>
+            <Nav className="toggledNav">
             {isLoggedIn && (<Nav.Link
                 style={podsumowanieClass}
                 eventKey={2}

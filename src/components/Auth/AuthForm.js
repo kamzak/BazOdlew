@@ -1,11 +1,11 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 import Layout from "../Layout/Layout";
 
 import classes from "./AuthForm.module.css";
 
-const SECRET_CODE = '508604';
+let SECRET_CODE = '';
 
 const AuthForm = () => {
   const history = useNavigate();
@@ -18,6 +18,12 @@ const AuthForm = () => {
 
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(async() => {
+    const response = await fetch('https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/code.json');
+    const code = await response.json();
+    SECRET_CODE = code.secCode;
+  }, []);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -34,7 +40,6 @@ const AuthForm = () => {
     setIsLoading(true);
     let url;
     if (isLogin) {
-
       url =
         "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyC0_wLEm0kTPqpecoGo0nIxW-rpV-Xt_xU";
       fetch(url, {
@@ -74,7 +79,7 @@ const AuthForm = () => {
         });
     } else {
       let secretCode = codeInputRef.current.value;
-      if(secretCode === SECRET_CODE) {
+      if(secretCode == SECRET_CODE) {
       url =
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyC0_wLEm0kTPqpecoGo0nIxW-rpV-Xt_xU";
       fetch(url, {
@@ -128,7 +133,7 @@ const AuthForm = () => {
         <form onSubmit={submitHandler}>
           <div className={classes.control}>
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" required ref={emailInputRef} />
+            <input value="admin@admin.com" type="email" id="email" required ref={emailInputRef} />
           </div>
           <div className={classes.control}>
             <label htmlFor="password">Hasło</label>
@@ -137,6 +142,7 @@ const AuthForm = () => {
               id="password"
               required
               ref={passwordInputRef}
+              value="adminadmin"
             />
           </div>
           {!isLogin && (

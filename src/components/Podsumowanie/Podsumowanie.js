@@ -1,5 +1,7 @@
 import classes from "./Podsumowanie.module.css";
-import React, { useRef, useState, useContext } from "react";
+import searchIcon from "../static/search-icon.png";
+import pdfFile from "../static/Raport_1111.pdf";
+import React, { useRef, useState, useContext, useEffect } from "react";
 import {
   FormControl,
   Form,
@@ -13,6 +15,8 @@ import Layout from "../Layout/Layout";
 import { storage, database } from "../../firebase/firebase";
 import html2pdf from "html2pdf.js";
 import AuthContext from "../../store/auth-context";
+import errorIcon from "../static/error-icon.png";
+import Modal from "../UI/Modal";
 
 const Podsumowanie = () => {
   const [analizaData, setAnalizaData] = useState([]);
@@ -20,6 +24,8 @@ const Podsumowanie = () => {
   const [wlmechData, setWlmechData] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [imgUrls, setImgUrls] = useState([]);
+  const [isData, setIsData] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
 
   const szukajRef = useRef();
   const podsumowanieRef = useRef();
@@ -45,18 +51,20 @@ const Podsumowanie = () => {
       });
   };
 
-  const searchData = async (event) => {
-    event.preventDefault();
+  const fetchResults = async () => {
+    setIsData(true);
     const token = authCtx.token;
-
     const responseAnaliza = await fetch(
-      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/analiza.json?auth="+token
+      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/analiza.json?auth=" +
+        token
     );
     const responseStruktura = await fetch(
-      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/struktura.json?auth="+token
+      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/struktura.json?auth=" +
+        token
     );
     const responseWlmech = await fetch(
-      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/wlmech.json?auth="+token
+      "https://bazodlew-default-rtdb.europe-west1.firebasedatabase.app/wlmech.json?auth=" +
+        token
     );
 
     const dataAnaliza = await responseAnaliza.json();
@@ -119,11 +127,28 @@ const Podsumowanie = () => {
         });
       }
     }
+    if (szukajRef.current.value !== "") {
+      if (
+        analizaItems.length === 0 &&
+        strukturaItems.length === 0 &&
+        wlmechItems.length === 0
+      ) {
+        setIsData(false);
+      } else {
+        setIsData(true);
+      }
+    }
+
     fetchImages();
     setAnalizaData(analizaItems);
     setStrukturaData(strukturaItems);
     setWlmechData(wlmechItems);
     setShowTable(true);
+  };
+
+  const searchData = (event) => {
+    event.preventDefault();
+    fetchResults();
   };
 
   const generatePDF = () => {
@@ -140,10 +165,19 @@ const Podsumowanie = () => {
     html2pdf().set(opt).from(print).save();
   };
 
+  const closeAlert = () => {
+    setIsData(true);
+    setShowAlert(false);
+  };
+
+  useEffect(() => {
+    fetchResults();
+  }, []);
+
   return (
     <Layout title="podsumowanie">
       <h1 className={classes.pods__title}>Podsumowanie wyników</h1>
-      <Form>
+      <Form style={{ marginBottom: "0.5rem" }}>
         <Row>
           <Form.Label htmlFor="nrwytopu">Nr wytopu:</Form.Label>
           <Col xs={6} sm={6} xl={3}>
@@ -153,6 +187,7 @@ const Podsumowanie = () => {
               placeholder="Wpisz nr wytopu..."
               ref={szukajRef}
             />
+            <img className={classes.searchIcon} src={searchIcon} />
           </Col>
           <Col xs={6} sm={6} xl={2}>
             <Button onClick={searchData} className={classes.search}>
@@ -164,6 +199,21 @@ const Podsumowanie = () => {
               Generuj PDF
             </Button>
           </Col>
+        </Row>
+        <Row className="row-fluid">
+          {!isData && (
+            <div className="alert alert-danger alert-dismissible d-flex align-items-center fade show">
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+              <strong className="mx-2">Błąd!</strong> Nie znaleziono wyników dla podanego nr
+              wytopu.
+              <button
+                type="button"
+                className="btn-close"
+                onClick={closeAlert}
+              ></button>
+            </div>
+          )}
+          {showAlert && <Modal onClose={closeAlert}>elo elo elo</Modal>}
         </Row>
       </Form>
       {showTable && (
@@ -334,10 +384,13 @@ const Podsumowanie = () => {
                       return (
                         <div key={i} className={classes.imgCont}>
                           {imgUrls.map((url, i) => {
-                            let url1 = url.split('2F');
-                            let url2 = url1[1].split('?alt');
+                            let url1 = url.split("2F");
+                            let url2 = url1[1].split("?alt");
                             let url3 = url2[0];
-                            if(url3 === (`${item.nrWyt}_1`) || url3 === (`${item.nrWyt}_1.jpeg`)) {
+                            if (
+                              url3 === `${item.nrWyt}_1` ||
+                              url3 === `${item.nrWyt}_1.jpeg`
+                            ) {
                               return (
                                 <a
                                   key={i}
@@ -372,10 +425,13 @@ const Podsumowanie = () => {
                       return (
                         <div key={i} className={classes.imgCont}>
                           {imgUrls.map((url, i) => {
-                            let url1 = url.split('2F');
-                            let url2 = url1[1].split('?alt');
+                            let url1 = url.split("2F");
+                            let url2 = url1[1].split("?alt");
                             let url3 = url2[0];
-                            if(url3 === (`${item.nrWyt}_2`) || url3 === (`${item.nrWyt}_2.jpeg`)) {
+                            if (
+                              url3 === `${item.nrWyt}_2` ||
+                              url3 === `${item.nrWyt}_2.jpeg`
+                            ) {
                               return (
                                 <a
                                   key={i}

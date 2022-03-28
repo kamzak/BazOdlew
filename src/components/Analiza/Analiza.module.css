@@ -46,19 +46,17 @@ td,
 th {
   border: 1px solid #126e82;
 }
-
-.error {
+.errorStar {
   color: red;
-  font-size: 0.85rem;
-  float: right;
+}
+.warningStar {
+  color: rgb(170, 155, 22);
+  font-weight: bold;
 }
 
-.wytClasses {
-  background-color: green;
-}
-
-.wytClassesError {
-  background-color: red;
+.invalidWarning {
+  border: 1px solid #aca10c !important;
+  background-color: #fbfddd !important;
 }
 
 .invalid {
@@ -69,4 +67,76 @@ th {
 .invalid:focus {
   border-color: #ff8800;
   background-color: #fbe8d2;
+}
+
+.errorIcon {
+  position: relative;
+  float: right;
+  height: 1.5rem;
+  top: -31px;
+  right: 9px;
+  opacity: 0.8;
+  cursor: default;
+  margin-bottom: -24px;
+}
+
+
+.time {
+  position: relative;
+}
+
+.time .timeHover {
+  visibility: hidden;
+  width: 5.65rem;
+  background-color: rgb(1, 77, 139);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  opacity: 0.7;
+
+  /* Position the tooltip */
+  position: absolute;
+  left: 0;
+  bottom: 2.5rem;
+  z-index: 1;
+}
+
+.time:hover .timeHover {
+  visibility: visible;
+}
+
+.error {
+  position: relative;
+  float: right;
+  top: -1.85rem;
+  right: 2.3rem;
+  color: red;
+  font-size: 0.85rem;
+  height: 0;
+}
+
+.warning {
+  color: rgb(163, 148, 16);
+  position: relative;
+  float: right;
+  top: -1.85rem;
+  right: 2.3rem;
+  font-size: 0.85rem;
+  height: 0;
+}
+
+.warningIcon {
+  position: relative;
+  float: right;
+  height: 1.5rem;
+  top: -32px;
+  right: 7px;
+  opacity: 0.8;
+  cursor: default;
+  margin-bottom: -24px;
+}
+
+.obowiazkowe {
+  font-style: italic;
 }

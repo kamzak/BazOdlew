@@ -8,6 +8,9 @@ import Layout from "../Layout/Layout";
 import Modal from "../UI/Modal";
 import Pagination from "../Layout/Pagination";
 import AuthContext from "../../store/auth-context";
+import useInput from "../../hooks/use-input";
+import errorIcon from "../static/error-icon.png";
+import warningIcon from "../static/warning-icon.png";
 
 const Analiza = () => {
   // Manage data states
@@ -18,28 +21,185 @@ const Analiza = () => {
   const [showAddAlert, setAddShowAlert] = useState(false);
   const [showRemoveAlert, setRemoveShowAlert] = useState(false);
 
-  // Manage input states
+  const [mounted, setMounted] = useState(false);
+
+  // Manage input states - Error managing
+  let errorText = "Błędne dane!";
+  // Input validation
+  // Nr Wytopu
   const [wyt, setWyt] = useState("");
   const [wytTouched, setWytTouched] = useState(false);
   const [wytExist, setWytExist] = useState("");
 
-  let errorText = '| Numer wytopu jest niepoprawny! |';
-
   const wytValid = wyt.trim() !== "" && wytExist === "";
   const wytInvalid = !wytValid && wytTouched;
+  let itemNr = "";
+  const wytBlur = () => {
+    setWytTouched(true);
+    datas.map((item) => {
+      itemNr = item.nrWyt;
+      if (itemNr === wyt) {
+        let temp = `${itemNr} już istnieje w bazie!`;
+        setWytExist(temp);
+      }
+    });
+  };
+  const wytHandler = (event) => {
+    setWytTouched(true);
+    if (event.target.value.length <= 6 && event.target.value >= 0) {
+      setWyt(event.target.value);
+    }
+    if (event.target.value === "" || event.target.value !== itemNr) {
+      setWytExist("");
+    }
+  };
 
-  let formIsValid = false;
+  // Gatunek
+  const {
+    value: gat,
+    isValid: gatIsValid,
+    hasError: gatHasError,
+    valueChangeHandler: gatChange,
+    inputBlurHandler: gatBlur,
+    reset: resetGat,
+  } = useInput((value) => value.trim() !== "", "25");
 
-  if (!wytInvalid) {
-    formIsValid = true;
-  }
+  // Rodz metalu
+  const {
+    value: rodz,
+    isValid: rodzIsValid,
+    hasError: rodzHasError,
+    valueChangeHandler: rodzChange,
+    inputBlurHandler: rodzBlur,
+    reset: resetRodz,
+  } = useInput((value) => value.trim() !== "", "25");
+
+  // C
+  const {
+    value: C,
+    isValid: CIsValid,
+    hasError: CHasError,
+    valueChangeHandler: CChange,
+    inputBlurHandler: CBlur,
+    reset: resetC,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // Si
+  const {
+    value: Si,
+    isValid: SiIsValid,
+    hasError: SiHasError,
+    valueChangeHandler: SiChange,
+    inputBlurHandler: SiBlur,
+    reset: resetSi,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // Mn
+  const {
+    value: Mn,
+    isValid: MnIsValid,
+    hasError: MnHasError,
+    valueChangeHandler: MnChange,
+    inputBlurHandler: MnBlur,
+    reset: resetMn,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // Mg
+  const {
+    value: Mg,
+    isValid: MgIsValid,
+    hasError: MgHasError,
+    valueChangeHandler: MgChange,
+    inputBlurHandler: MgBlur,
+    reset: resetMg,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // P
+  const {
+    value: P,
+    isValid: PIsValid,
+    hasError: PHasError,
+    valueChangeHandler: PChange,
+    inputBlurHandler: PBlur,
+    reset: resetP,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // S
+  const {
+    value: S,
+    isValid: SIsValid,
+    hasError: SHasError,
+    valueChangeHandler: SChange,
+    inputBlurHandler: SBlur,
+    reset: resetS,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // Cu
+  const {
+    value: Cu,
+    isValid: CuIsValid,
+    hasError: CuHasError,
+    valueChangeHandler: CuChange,
+    inputBlurHandler: CuBlur,
+    reset: resetCu,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // Ce
+  const {
+    value: Ce,
+    isValid: CeIsValid,
+    hasError: CeHasError,
+    valueChangeHandler: CeChange,
+    inputBlurHandler: CeBlur,
+    reset: resetCe,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // La
+  const {
+    value: La,
+    isValid: LaIsValid,
+    hasError: LaHasError,
+    valueChangeHandler: LaChange,
+    inputBlurHandler: LaBlur,
+    reset: resetLa,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // Zr
+  const {
+    value: Zr,
+    isValid: ZrIsValid,
+    hasError: ZrHasError,
+    valueChangeHandler: ZrChange,
+    inputBlurHandler: ZrBlur,
+    reset: resetZr,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // Bi
+  const {
+    value: Bi,
+    isValid: BiIsValid,
+    hasError: BiHasError,
+    valueChangeHandler: BiChange,
+    inputBlurHandler: BiBlur,
+    reset: resetBi,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
+
+  // Ca
+  const {
+    value: Ca,
+    isValid: CaIsValid,
+    hasError: CaHasError,
+    valueChangeHandler: CaChange,
+    inputBlurHandler: CaBlur,
+    reset: resetCa,
+  } = useInput((value) => value.trim() !== "", "7", false, true);
 
   // use Context to retrieve auth token
   const authCtx = useContext(AuthContext);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [recPerPage] = useState(2);
+  const [recPerPage] = useState(3);
 
   // Pagination func setting current page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -71,12 +231,11 @@ const Analiza = () => {
   const sendData = async (event) => {
     event.preventDefault();
 
-    setWytTouched(true);
-
     if (!wytValid) {
       return;
     }
     const promises = [];
+    const date = new Date();
     await set(ref(database, "analiza/" + nrWytRef.current.value), {
       nrWyt: nrWytRef.current.value,
       rodzMet: rodzMetRef.current.value,
@@ -93,6 +252,13 @@ const Analiza = () => {
       cyrkon: cyrkonRef.current.value,
       bizmut: bizmutRef.current.value,
       wapn: wapnRef.current.value,
+      data: {
+        dzien: date.getDate(),
+        miesiac: date.getMonth() + 1,
+        rok: date.getFullYear(),
+        godzina: date.getHours(),
+        minuta: date.getMinutes(),
+      },
     });
 
     Promise.all(promises)
@@ -117,6 +283,23 @@ const Analiza = () => {
     cyrkonRef.current.value = "";
     bizmutRef.current.value = "";
     wapnRef.current.value = "";
+
+    setWyt("");
+    setWytTouched(false);
+    resetGat();
+    resetRodz();
+    resetC();
+    resetSi();
+    resetMn();
+    resetMg();
+    resetP();
+    resetS();
+    resetCu();
+    resetCe();
+    resetLa();
+    resetZr();
+    resetBi();
+    resetCa();
   };
 
   // Fetching data from database
@@ -146,6 +329,13 @@ const Analiza = () => {
         cyrkon: data[key].cyrkon,
         bizmut: data[key].bizmut,
         wapn: data[key].wapn,
+        data: {
+          dzien: data[key].data.dzien,
+          miesiac: data[key].data.miesiac,
+          rok: data[key].data.rok,
+          godzina: data[key].data.godzina,
+          minuta: data[key].data.minuta,
+        },
       });
     }
     setDatas(baseItems);
@@ -153,38 +343,7 @@ const Analiza = () => {
   // Fetching data once
   useEffect(() => {
     fetchData();
-  }, []);
-  let itemNr = '';
-  // Input handlers
-  const wytHandler = (event) => {
-    setWyt(event.target.value);
-    if(event.target.value === '' || event.target.value !== itemNr) {
-      setWytExist('');
-    }
-  };
-
-  const wytBlur = () => {
-    setWytTouched(true);
-    datas.map((item) => {
-      itemNr = item.nrWyt;
-      if (itemNr === wyt) {
-        let temp = ` | ${itemNr} już istnieje w bazie! |`;
-        setWytExist(temp);
-        console.log(wytExist);
-      }
-    });
-    
-    /*
-    currentRecords.map((item) => {
-      if (item.nrWyt === wyt) {
-        console.log(item.nrWyt + " " + wyt);
-        let temp = `${item.nrWyt} już istnieje w bazie!`;
-        setWytExist(temp);
-        console.log(wytExist);
-        return;
-      }
-    });*/
-  };
+  });
 
   // Listing all images and saving it to setImgUrls state
 
@@ -198,6 +357,7 @@ const Analiza = () => {
 
     setShowTable((prevState) => !prevState);
     await fetchData();
+    setMounted(true);
   };
 
   const closeAlertHandler = (props) => {
@@ -205,50 +365,146 @@ const Analiza = () => {
     setRemoveShowAlert(false);
   };
 
-  const wytClasses = wytInvalid ? classes.invalid : '';
+  // Walidacja formularza
+
+  let formIsValid = false;
+  if (
+    !wytInvalid &&
+    gatIsValid &&
+    rodzIsValid &&
+    CIsValid &&
+    SiIsValid &&
+    MnIsValid &&
+    MgIsValid &&
+    PIsValid &&
+    SIsValid &&
+    CuIsValid &&
+    CeIsValid &&
+    LaIsValid &&
+    ZrIsValid &&
+    BiIsValid &&
+    CaIsValid
+  ) {
+    formIsValid = true;
+  }
+
+  // Dynamic classes
+  let wytClasses = "";
+  let wytStar = "";
+
+  if (wytInvalid) {
+    wytClasses = classes.invalid;
+    wytStar = classes.errorStar;
+  }
+  if (wytExist !== "") {
+    wytClasses = classes.invalidWarning;
+    wytStar = classes.warningStar;
+  }
+  if (!wytInvalid && wytExist === "") {
+    wytClasses = "";
+    wytStar = "";
+  }
+
+  const gatClasses = gatHasError ? classes.invalid : "";
+  const gatStar = gatHasError ? classes.errorStar : "";
+
+  const rodzClasses = rodzHasError ? classes.invalid : "";
+  const rodzStar = rodzHasError ? classes.errorStar : "";
+
+  const CClasses = CHasError ? classes.invalid : "";
+  const CStar = CHasError ? classes.errorStar : "";
+
+  const SiClasses = SiHasError ? classes.invalid : "";
+  const SiStar = SiHasError ? classes.errorStar : "";
+
+  const MnClasses = MnHasError ? classes.invalid : "";
+  const MnStar = MnHasError ? classes.errorStar : "";
+
+  const MgClasses = MgHasError ? classes.invalid : "";
+  const MgStar = MgHasError ? classes.errorStar : "";
+
+  const PClasses = PHasError ? classes.invalid : "";
+  const PStar = PHasError ? classes.errorStar : "";
+
+  const SClasses = SHasError ? classes.invalid : "";
+  const SStar = SHasError ? classes.errorStar : "";
+
+  const CuClasses = CuHasError ? classes.invalid : "";
+  const CuStar = CuHasError ? classes.errorStar : "";
+
+  const CeClasses = CeHasError ? classes.invalid : "";
+  const CeStar = CeHasError ? classes.errorStar : "";
+
+  const LaClasses = LaHasError ? classes.invalid : "";
+  const LaStar = LaHasError ? classes.errorStar : "";
+
+  const ZrClasses = ZrHasError ? classes.invalid : "";
+  const ZrStar = ZrHasError ? classes.errorStar : "";
+
+  const BiClasses = BiHasError ? classes.invalid : "";
+  const BiStar = BiHasError ? classes.errorStar : "";
+
+  const CaClasses = CaHasError ? classes.invalid : "";
+  const CaStar = CaHasError ? classes.errorStar : "";
 
   return (
     <Layout title="analiza" className={classes.analiza}>
       <h1 className={classes.analiza__title}>
         Formularz dodania wyników - analiza chemiczna
       </h1>
-      <p>Wprowadź dane:</p>
+      <p>Wprowadź dane [ <span className={classes.obowiazkowe}>* - pole obowiązkowe</span> ]:</p>
       <Form>
         <Row className="align-items-center">
           <Col xs={12} sm={4} xl={4} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName" style={{width: '100%'}}>
-              Nr wytopu 
-              {wytInvalid && (
-                <span className={classes.error}>
-                  {(wytExist !== '') && wytExist}
-                  {(wytExist === '') && ` | Numer wytopu jest niepoprawny! |`}
-                </span>
-              )}
+            <Form.Label htmlFor="wyt">
+              Nr wytopu <span className={wytStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={nrWytRef}
-              id="inlineFormInputName"
+              id="wyt"
               placeholder="Np. 2313"
               type="number"
               min="0"
-              value={wyt}
               className={wytClasses}
               onChange={wytHandler}
               onBlur={wytBlur}
-              required
+              value={wyt}
             />
+            {wytInvalid && wytExist === "" && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
+            {wytExist !== "" && (
+              <img alt="" src={warningIcon} className={classes.warningIcon} />
+            )}
+            {wytInvalid && (
+              <span className={classes.error}>
+                {wytExist === "" && errorText}
+              </span>
+            )}
+            {wytExist !== "" && (
+              <span className={classes.warning}>{wytExist}</span>
+            )}
           </Col>
           <Col xs={12} sm={4} xl={4} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputGroupUsername">
-              Rodzaj metalu
+            <Form.Label htmlFor="rodz">
+              Rodzaj metalu <span className={rodzStar}>*</span>
             </Form.Label>
             <FormControl
               ref={rodzMetRef}
-              id="inlineFormInputGroupUsername"
+              id="rodz"
               type="text"
               list="rodzMet"
               placeholder="Np. sfero, ADI, szare, SiMo itd."
+              value={rodz}
+              className={rodzClasses}
+              onChange={rodzChange}
+              onBlur={rodzBlur}
+              required
             />
+            {rodzHasError && <span className={classes.error}>{errorText}</span>}
+            {rodzHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
             <datalist id="rodzMet">
               <option value="Żeliwo sferoidalne" />
               <option value="Żeliwo ADI" />
@@ -259,16 +515,25 @@ const Analiza = () => {
             </datalist>
           </Col>
           <Col xs={12} sm={4} xl={4} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputGroupUsername">
-              Gatunek
+            <Form.Label htmlFor="gat">
+              Gatunek <span className={gatStar}>*</span>
             </Form.Label>
             <FormControl
               ref={gatunekRef}
-              id="inlineFormInputGroupUsername"
+              id="gat"
               type="text"
               list="gatunek"
               placeholder="Np. GJS 500-7"
+              value={gat}
+              className={gatClasses}
+              onChange={gatChange}
+              onBlur={gatBlur}
+              required
             />
+            {gatHasError && <span className={classes.error}>{errorText}</span>}
+            {gatHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
             <datalist id="gatunek">
               <option value="GJS-400-18 LT" />
               <option value="GJS-400-18" />
@@ -282,47 +547,71 @@ const Analiza = () => {
             </datalist>
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              C [<i>węgiel</i>] [%]
+            <Form.Label htmlFor="C">
+              C [<i>węgiel</i>] [%] <span className={CStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={wegielRef}
-              id="inlineFormInputName"
+              id="C"
               placeholder="udział % C"
               type="number"
               min="0"
               max="100"
+              value={C}
+              className={CClasses}
+              onChange={CChange}
+              onBlur={CBlur}
+              required
             />
+            {CHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputGroupUsername">
-              Si [<i>krzem</i>] [%]
+            <Form.Label htmlFor="Si">
+              Si [<i>krzem</i>] [%] <span className={SiStar}>*</span>
             </Form.Label>
             <FormControl
               ref={krzemRef}
-              id="inlineFormInputGroupUsername"
+              id="Si"
               placeholder="udział % Si"
               type="number"
               min="0"
               max="100"
+              value={Si}
+              className={SiClasses}
+              onChange={SiChange}
+              onBlur={SiBlur}
+              required
             />
+            {SiHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              Mn [<i>mangan</i>] [%]
+            <Form.Label htmlFor="Mn">
+              Mn [<i>mangan</i>] [%] <span className={MnStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={manganRef}
-              id="inlineFormInputName"
+              id="Mn"
               placeholder="udział % Mn"
               type="number"
               min="0"
               max="100"
+              value={Mn}
+              className={MnClasses}
+              onChange={MnChange}
+              onBlur={MnBlur}
+              required
             />
+            {MnHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputGroupUsername">
-              Mg [<i>magnez</i>] [%]
+            <Form.Label htmlFor="Mg">
+              Mg [<i>magnez</i>] [%] <span className={MgStar}>*</span>
             </Form.Label>
             <FormControl
               ref={magnezRef}
@@ -331,76 +620,124 @@ const Analiza = () => {
               type="number"
               min="0"
               max="100"
+              value={Mg}
+              className={MgClasses}
+              onChange={MgChange}
+              onBlur={MgBlur}
+              required
             />
+            {MgHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              P [<i>fosfor</i>] [%]
+            <Form.Label htmlFor="P">
+              P [<i>fosfor</i>] [%] <span className={PStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={fosforRef}
-              id="inlineFormInputName"
+              id="P"
               placeholder="udział % P"
               type="number"
               min="0"
               max="100"
+              value={P}
+              className={PClasses}
+              onChange={PChange}
+              onBlur={PBlur}
+              required
             />
+            {PHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              S [<i>siarka</i>] [%]
+            <Form.Label htmlFor="S">
+              S [<i>siarka</i>] [%] <span className={SStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={siarkaRef}
-              id="inlineFormInputName"
+              id="S"
               placeholder="udział % S"
               type="number"
               min="0"
               max="100"
+              value={S}
+              className={SClasses}
+              onChange={SChange}
+              onBlur={SBlur}
+              required
             />
+            {SHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              Cu [<i>miedź</i>] [%]
+            <Form.Label htmlFor="Cu">
+              Cu [<i>miedź</i>] [%] <span className={CuStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={miedzRef}
-              id="inlineFormInputName"
+              id="Cu"
               placeholder="udział % Cu"
               type="number"
               min="0"
               max="100"
+              value={Cu}
+              className={CuClasses}
+              onChange={CuChange}
+              onBlur={CuBlur}
+              required
             />
+            {CuHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              Ce [<i>cer</i>] [%]
+            <Form.Label htmlFor="Ce">
+              Ce [<i>cer</i>] [%] <span className={CeStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={cerRef}
-              id="inlineFormInputName"
+              id="Ce"
               placeholder="udział % Ce"
               type="number"
               min="0"
               max="100"
+              value={Ce}
+              className={CeClasses}
+              onChange={CeChange}
+              onBlur={CeBlur}
+              required
             />
+            {CeHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              La [<i>lantan</i>] [%]
+            <Form.Label htmlFor="La">
+              La [<i>lantan</i>] [%] <span className={LaStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={lantanRef}
-              id="inlineFormInputName"
+              id="La"
               placeholder="udział % La"
               type="number"
               min="0"
               max="100"
+              value={La}
+              className={LaClasses}
+              onChange={LaChange}
+              onBlur={LaBlur}
+              required
             />
+            {LaHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              Zr [<i>cyrkon</i>] [%]
+            <Form.Label htmlFor="Zr">
+              Zr [<i>cyrkon</i>] [%] <span className={ZrStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={cyrkonRef}
@@ -409,33 +746,57 @@ const Analiza = () => {
               type="number"
               min="0"
               max="100"
+              value={Zr}
+              className={ZrClasses}
+              onChange={ZrChange}
+              onBlur={ZrBlur}
+              required
             />
+            {ZrHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              Bi [<i>bizmut</i>] [%]
+            <Form.Label htmlFor="Bi">
+              Bi [<i>bizmut</i>] [%] <span className={BiStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={bizmutRef}
-              id="inlineFormInputName"
+              id="Bi"
               placeholder="udział % Bi"
               type="number"
               min="0"
               max="100"
+              value={Bi}
+              className={BiClasses}
+              onChange={BiChange}
+              onBlur={BiBlur}
+              required
             />
+            {BiHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
           <Col xs={12} sm={3} xl={2} className="mb-3">
-            <Form.Label htmlFor="inlineFormInputName">
-              Ca [<i>wapń</i>] [%]
+            <Form.Label htmlFor="Ca">
+              Ca [<i>wapń</i>] [%] <span className={CaStar}>*</span>
             </Form.Label>
             <Form.Control
               ref={wapnRef}
-              id="inlineFormInputName"
+              id="Ca"
               placeholder="udział % Ca"
               type="number"
               min="0"
               max="100"
+              value={Ca}
+              className={CaClasses}
+              onChange={CaChange}
+              onBlur={CaBlur}
+              required
             />
+            {CaHasError && (
+              <img alt="" src={errorIcon} className={classes.errorIcon} />
+            )}
           </Col>
         </Row>
         <Row className="align-items-center">
@@ -453,7 +814,7 @@ const Analiza = () => {
 
         {showAddAlert && (
           <Modal onClose={closeAlertHandler}>
-            Wprowadzono wyniki do bazy danych!
+            Wprowadzono wyniki!
           </Modal>
         )}
       </Form>
@@ -479,28 +840,38 @@ const Analiza = () => {
           >
             <thead className="tbHead text-center">
               <tr className="align-items-center">
-                <th>Nr wytopu</th>
-                <th>Gatunek</th>
-                <th>Rodzaj metalu</th>
-                <th>C</th>
-                <th>Si</th>
-                <th>Mn</th>
-                <th>Mg</th>
-                <th>P</th>
-                <th>S</th>
-                <th>Cu</th>
-                <th>Ce</th>
-                <th>La</th>
-                <th>Zr</th>
-                <th>Bi</th>
-                <th>Ca</th>
-                <th>Usuń</th>
+                <th>Data dodania</th>
+                <th style={{ width: "5%" }}>Nr wytopu</th>
+                <th style={{ width: "9.5%" }}>Gatunek</th>
+                <th style={{ width: "9.75%" }}>Rodzaj metalu</th>
+                <th style={{ width: "6%" }}>C</th>
+                <th style={{ width: "6%" }}>Si</th>
+                <th style={{ width: "6%" }}>Mn</th>
+                <th style={{ width: "6%" }}>Mg</th>
+                <th style={{ width: "6%" }}>P</th>
+                <th style={{ width: "6%" }}>S</th>
+                <th style={{ width: "6%" }}>Cu</th>
+                <th style={{ width: "6%" }}>Ce</th>
+                <th style={{ width: "6%" }}>La</th>
+                <th style={{ width: "6%" }}>Zr</th>
+                <th style={{ width: "6%" }}>Bi</th>
+                <th style={{ width: "6%" }}>Ca</th>
+                <th style={{ width: "3.75%" }}>Usuń</th>
               </tr>
             </thead>
             <tbody className="text-center">
               {currentRecords.map((item, i) => {
                 return (
                   <tr key={i} className="align-items-center">
+                    <td className={classes.time}>
+                      {`${item.data.dzien}/${item.data.miesiac}/${item.data.rok}`}
+                      <span className={classes.timeHover}>
+                        {item.data.minuta <= 9 &&
+                          item.data.minuta >= 0 &&
+                          item.data.godzina + ":0" + item.data.minuta}
+                        {item.data.minuta > 9 && item.data.godzina + ":" + item.data.minuta}
+                      </span>
+                    </td>
                     <td>{item.nrWyt}</td>
                     <td>{item.gatunek}</td>
                     <td>{item.rodzMet}</td>
@@ -555,6 +926,10 @@ const Analiza = () => {
       {showTable && currentRecords.length === 0 && (
         <p className={classes.errorMessage}>Brak wyników w bazie!</p>
       )}
+      {showTable &&
+        mounted &&
+        currentRecords.length === 0 &&
+        paginate((prev) => prev - 1)}
     </Layout>
   );
 };

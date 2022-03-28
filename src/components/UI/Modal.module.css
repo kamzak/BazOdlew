@@ -9,9 +9,8 @@
 }
 
 .modal {
-  color: #155724;
   position: fixed;
-  top: 20vh;
+  top: 13vh;
   left: 5%;
   width: 90%;
   background-color: #d4edda;
@@ -22,6 +21,15 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   z-index: 30;
   animation: slide-down 300ms ease-out forwards;
+}
+
+.successIcon {
+  position: relative;
+  float: right;
+  height: 1.5rem;
+  top: -0.75rem;
+  cursor: default;
+  margin-bottom: -24px;
 }
 
 @media (min-width: 768px) {

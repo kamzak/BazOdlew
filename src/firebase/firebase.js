@@ -2,7 +2,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
 import 'firebase/compat/database';
 import { getDatabase } from "firebase/database";
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 
 // Import the functions you need from the SDKs you need
